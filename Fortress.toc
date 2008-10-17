@@ -1,4 +1,4 @@
-## Interface: 20400
+## Interface: 30000
 ## Title: Fortress
 ## Notes: A display for LibDataBroker-1.1
 ## Author: andreasg, Borlox
