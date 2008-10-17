@@ -485,8 +485,7 @@ local blizOptions
 
 local function ChatCmd(input)
 	if not input or input:trim() == "" then
-		--AceCfgDlg:Open(appName)
-		InterfaceOptionsFrame_OpenToFrame(blizOptions)
+		InterfaceOptionsFrame_OpenToCategory(blizOptions)
 	else
 		if input:trim() == "help" then
 			input = ""
