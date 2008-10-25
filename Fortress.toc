@@ -2,14 +2,17 @@
 ## Title: Fortress
 ## Notes: A display for LibDataBroker-1.1
 ## Author: andreasg, Borlox
-## Version: 1.0
+## Version: @project-version@ 
 ## X-Email: kuchen_@gmx.de
 ## OptionalDeps: Ace3, LibDataBroker-1.1, LegoBlock
 ## X-Embeds: Ace3, LibDataBroker-1.1, LegoBlock
 
 ## SavedVariables: FortressDB
 
+#@no-lib-strip@
 embeds.xml
+#@end-no-lib-strip@
+
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 libs\LegoBlock\LegoBlock.lua
 

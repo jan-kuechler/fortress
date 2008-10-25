@@ -1,4 +1,4 @@
---[[ $Id: Options.lua 81933 2008-09-21 11:50:26Z borlox $ ]]--
+--[[ @file-author@ @file-date-iso@ @file-abbreviated-hash@ ]]--
 local LibStub = LibStub
 local Fortress = LibStub("AceAddon-3.0"):GetAddon("Fortress")
 

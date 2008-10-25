@@ -1,3 +1,4 @@
+<!-- @file-author@ @file-date-iso@ @file-abbreviated-hash@ -->
 <Ui>
 	<Script file="libs\LibStub\LibStub.lua" />
 	<Include file="libs\CallbackHandler-1.0\CallbackHandler-1.0.xml" />
