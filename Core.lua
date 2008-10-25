@@ -15,7 +15,7 @@ local strTable = {}
 -- utility functions
 --------
 local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
+--	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
 end
 
 local function GetPluginSetting(pluginName, setting)
@@ -84,15 +84,20 @@ end
 local function Block_OnEnter(self)
 	local obj  = self.obj
 	local name = self.name
-	
+		
 	if db.hideAllOnMouseOut then
 		Fortress:ShowAllObjects()
 	else
 		self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
 	end
 	
-	if not InCombatLockdown() or not GetPluginSetting(name, "hideTooltipInCombat") then
+	if GetPluginSetting(name, "disableTooltip") then
+		return
+	end
+			
+	if (not InCombatLockdown()) or (not GetPluginSetting(name, "hideTooltipInCombat")) then	
 		if obj.tooltip then
+			Debug("using obj.tooltip")
 			PrepareTooltip(obj.tooltip, self)
 			if obj.tooltiptext then
 				obj.tooltip:SetText(obj.tooltiptext)
@@ -108,12 +113,15 @@ local function Block_OnEnter(self)
 			PrepareTooltip(GameTooltip, self)
 			GameTooltip:SetText(obj.tooltiptext)
 			GameTooltip:Show()		
+		
+		elseif obj.OnEnter then
+			obj.OnEnter(self)
 		end
 	end
 	
-	if obj.OnEnter then
-		obj.OnEnter(self)
-	end
+	--if self:GetScript("OnEnter") ~= Block_OnEnter then
+	--	self:SetScript("OnEnter", Block_OnEnter)
+	--end
 end
 
 local function Block_OnLeave(self)
@@ -267,6 +275,7 @@ function Fortress:OnInitialize()
 				blockWidth = 100,
 				
 				hideInCombat        = false,
+				disableTooltip      = false,
 				hideTooltipInCombat = false,
 				hideOnMouseOut      = false,	
 			},

@@ -56,7 +56,8 @@ L["Fixed Width"] = "Breite festsetzen"
 L["Don't change the width of this plugin automatically."] = "Die Breite des Plugins nicht automatisch \195\164ndern."
 L["Width"] = "Breite"
 L["The width of this plugin in fixed width mode."] = "Die Breite des Plugins"
-
+L["Disable tooltip"] = "Tooltip ausschalten"
+L["Do not show this plugin's tooltip."] = "Den Tooltip dieses Plugins niemals anzeigen."
 --[[
 
 Ä: \195\132 ä: \195\164

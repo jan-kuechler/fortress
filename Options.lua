@@ -274,14 +274,19 @@ local pluginSettings = {
 			desc = L["Hide this plugin in combat."],
 		},
 		{
+			key = "hideOnMouseOut",
+			name = L["Hide on mouse out"],
+			desc = L["Hide this plugin until the mouse is over the frame."],
+		},
+		{
 			key = "hideTooltipInCombat",
 			name = L["Hide tooltip in combat"],
 			desc = L["Hide this plugin's tooltip in combat."],
 		},
 		{
-			key = "hideOnMouseOut",
-			name = L["Hide on mouse out"],
-			desc = L["Hide this plugin until the mouse is over the frame."],
+			key = "disableTooltip",
+			name = L["Disable tooltip"],
+			desc = L["Do not show this plugin's tooltip."],
 		},
 	},
 	{

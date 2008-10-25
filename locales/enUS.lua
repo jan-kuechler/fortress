@@ -55,3 +55,5 @@ L["Fixed Width"] = true
 L["Don't change the width of this plugin automatically."] = true
 L["Width"] = true
 L["The width of this plugin in fixed width mode."] = true
+L["Disable tooltip"] = true
+L["Do not show this plugin's tooltip."] = true
