@@ -14,3 +14,10 @@ externals:
 
 ignore:
 	- scripts
+	- libs/LibDataBroker-1.1/.git
+	- libs/LibDataBroker-1.1/README.textile
+	- libs/LegoBlock/.svn
+	- libs/LegoBlock/Build.lua
+	- libs/LegoBlock/LegoBlock.toc
+	- libs/LegoBlock/LibStub.lua
+	

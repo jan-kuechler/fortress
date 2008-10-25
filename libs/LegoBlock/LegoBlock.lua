@@ -1,5 +1,5 @@
 local major = "LegoBlock-Beta1"
-local minor = tonumber(string.match("$Revision: 39 $", "(%d+)") or 1)
+local minor = tonumber(string.match("$Revision: 147 $", "(%d+)") or 1)
 
 if( not LibStub ) then
 	error(string.format("%s requires LibStub.", major))
