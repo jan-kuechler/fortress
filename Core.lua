@@ -11,6 +11,13 @@ local frames = {}
 local dataObjects = {}
 local strTable = {}
 
+-- Change this line to
+-- local TABLET20_FIX = false
+-- to disable the fix for Tablet-2.0 tooltips,
+-- that may prevent the tooltip to be shown for
+-- certain plugins.
+local TABLET20_FIX = true
+
 --------
 -- utility functions
 --------
@@ -91,6 +98,10 @@ local function Block_OnEnter(self)
 		self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
 	end
 	
+	if TABLET20_FIX and self:GetScript("OnEnter") ~= Block_OnEnter then
+		self:SetScript("OnEnter", Block_OnEnter)
+	end
+	
 	if GetPluginSetting(name, "disableTooltip") then
 		return
 	end
@@ -118,10 +129,6 @@ local function Block_OnEnter(self)
 			obj.OnEnter(self)
 		end
 	end
-	
-	--if self:GetScript("OnEnter") ~= Block_OnEnter then
-	--	self:SetScript("OnEnter", Block_OnEnter)
-	--end
 end
 
 local function Block_OnLeave(self)

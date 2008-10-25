@@ -249,7 +249,7 @@ local pluginSettings = {
 			desc = L["Adjusts the plugin's size."],
 			min  = .1,
 			max  = 2,
-			step = .1,
+			step = .01,
 			isPercent = true,
 		},
 		{
