@@ -191,6 +191,15 @@ local options = {
 						end
 					end,
 				},
+				ignoreLaunchers = {
+					name = L["Ignore Launchers"],
+					desc = L["Do not display launcher plugins."],
+					type = "toggle",
+					set  = function(info, value)
+						DefaultSet(info, value)
+						Fortress:ToggleLaunchers()
+					end,
+				},
 			},
 		},
 		masterPluginSettings = {

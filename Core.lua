@@ -291,6 +291,7 @@ function Fortress:OnInitialize()
 			},
 			enabled = true,
 			hideAllOnMouseOut = false,
+			ignoreLaunchers = false,
 		},
 	}
 	local defaults = self.defaults
@@ -330,6 +331,9 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	Debug("Dataobject Registered:", name)
 	
 	local t = obj.type
+	if t == "launcher" and db.ignoreLaunchers then
+		return
+	end	
 	-- support data objects without type set, allthough that's not correct
 	if t and (t ~= "data source" and t ~= "launcher") then
 		Debug("Unknown type", t, name)
@@ -509,5 +513,22 @@ function Fortress:UpdateBorder(name)
 		frame:SetBackdrop(backdropNoBorder)
 		frame.optionsTbl.width = 0
 		frame.icon:SetPoint("LEFT", 4, 0)	
+	end
+end
+
+function Fortress:ToggleLaunchers()
+	local ignore = db.ignoreLaunchers
+	if ignore then
+		for name, obj in pairs(dataObjects) do
+			if obj.type == "launcher" then
+				self:DisableDataObject(name)
+			end
+		end
+	else
+		for name, obj in broker:DataObjectIterator() do
+			if obj.type == "launcher" then
+				self:LibDataBroker_DataObjectCreated(nil, name, obj)
+			end
+		end
 	end
 end
