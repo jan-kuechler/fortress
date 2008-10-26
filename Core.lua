@@ -22,8 +22,10 @@ local TABLET20_FIX = true
 -- utility functions
 --------
 local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
+	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
 end
+
+_G.Fortress = Fortress
 
 local function GetPluginSetting(pluginName, setting)
 	if db.pluginUseMaster[pluginName][setting] then
@@ -303,6 +305,10 @@ function Fortress:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("FortressDB", defaults)
 	db = self.db.profile
 	
+	self.db.RegisterCallback(self, "OnProfileChanged", "Refresh")
+	self.db.RegisterCallback(self, "OnProfileCopied", "Refresh")
+	self.db.RegisterCallback(self, "OnProfileReset", "Refresh")
+	
 	self:SetEnabledState(db.enabled)
 	self:RegisterOptions()
 end
@@ -322,6 +328,14 @@ function Fortress:OnDisable()
 	for _, f in pairs(frames) do
 		f:Hide()
 	end
+end
+
+function Fortress:Refresh()
+	db = self.db.profile
+	self:UpdateOptionsDbRef()
+		
+	self:UpdateAllObjects()
+	self:ToggleLaunchers()
 end
 
 --------

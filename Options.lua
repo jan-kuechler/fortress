@@ -522,6 +522,10 @@ function Fortress:RegisterOptions()
 	self:RegisterChatCommand("ft", ChatCmd)
 end
 
+function Fortress:UpdateOptionsDbRef()
+	db = self.db.profile
+end
+
 function Fortress:AddObjectOptions(name)
 	local t = self.optionsFrames[name] or {}
 	t.name = name
