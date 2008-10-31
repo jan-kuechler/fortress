@@ -330,12 +330,41 @@ function Fortress:OnDisable()
 	end
 end
 
-function Fortress:Refresh()
-	db = self.db.profile
-	self:UpdateOptionsDbRef()
+local BlockToUpdate
+local UpdaterFrame = CreateFrame("Frame")
+UpdaterFrame.elapsed = 0
+UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
+--	self.elapsed = self.elapsed + elapsed
+--	if self.elapsed > 0.01 then
+		BlockToUpdate = next(dataObjects, BlockToUpdate)
 		
-	self:UpdateAllObjects()
-	self:ToggleLaunchers()
+		if not BlockToUpdate then
+			self:Hide()
+		else
+			Debug("Updating", BlockToUpdate)
+			Fortress:UpdateObject(BlockToUpdate)
+		end
+		
+--		self.elapsed = 0
+--	end
+end)
+
+function Fortress:Refresh()
+	FT_PROFILE_DEBUG = true
+	db = self.db.profile
+	self:UpdateOptionsDbRef()	
+	Debug("DB refs updated")
+	
+	LB_DumpLinks()
+		
+	--self:UpdateAllObjects()
+	--Debug("Objects updated")
+	UpdaterFrame:Show()
+	
+--	self:ToggleLaunchers()
+	Debug("Launchers updated")
+	
+	FT_PROFILE_DEBUG = nil
 end
 
 --------
@@ -443,6 +472,9 @@ end
 
 function Fortress:UpdateAllObjects()
 	for name, obj in pairs(dataObjects) do
+		if FT_PROFILE_DEBUG then
+			Debug("Updating", name)
+		end
 		self:UpdateObject(name, obj)
 	end
 end

@@ -210,11 +210,11 @@ local options = {
 			get  = MasterGet,
 			set  = MasterSet,
 			args = {
-				heading = {
+				--[[heading = { -- outdated
 					name = L["description_text"],
 					type = "description",
 					order = 0,
-				},
+				},]]
 			},
 		},
 	},
