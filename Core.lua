@@ -302,7 +302,7 @@ function Fortress:OnInitialize()
 		defaults.profile.pluginUseMaster['*'][setting] = true
 	end
 	
-	self.db = LibStub("AceDB-3.0"):New("FortressDB", defaults)
+	self.db = LibStub("AceDB-3.0"):New("FortressDB", defaults, "Default")
 	db = self.db.profile
 	
 	self.db.RegisterCallback(self, "OnProfileChanged", "Refresh")
