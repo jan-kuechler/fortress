@@ -289,7 +289,10 @@ function Fortress:OnInitialize()
 				hideOnMouseOut      = false,	
 			},
 			pluginUseMaster = {
-				['*'] = {}
+				['*'] = {},
+			},
+			position = {
+				['*'] = {},
 			},
 			enabled = true,
 			hideAllOnMouseOut = false,
@@ -349,19 +352,41 @@ UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
 --	end
 end)
 
+local function ClearFortressFrames(tbl)
+	for frame in pairs(tbl) do
+		local name = frame:GetName()
+		if name and name:find("Fortress") then
+			tbl[frame] = nil
+		end	
+	end
+end
+
+local function ClearLegoData()
+	ClearFortressFrames(legos.frameLinks)
+	ClearFortressFrames(legos.stickiedFrames)
+	for frame, links in pairs(legos.frameLinks) do
+		ClearFortressFrames(links)
+	end
+	for k, v in pairs(db.blockDB) do
+		v.stickPoint = nil
+		v.relative = nil
+	end
+end
+
 function Fortress:Refresh()
 	FT_PROFILE_DEBUG = true
 	db = self.db.profile
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
 	
-	LB_DumpLinks()
+
+	ClearLegoData()
 		
-	--self:UpdateAllObjects()
-	--Debug("Objects updated")
-	UpdaterFrame:Show()
+	self:UpdateAllObjects()
+	Debug("Objects updated")
+	--UpdaterFrame:Show()
 	
---	self:ToggleLaunchers()
+	self:ToggleLaunchers()
 	Debug("Launchers updated")
 	
 	FT_PROFILE_DEBUG = nil
@@ -467,6 +492,43 @@ function Fortress:ShowAllObjects(force)
 	for name, frame in pairs(frames) do
 		local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
 		frame:SetAlpha(alpha)
+	end
+end
+
+function Fortress:SaveFramePositions(clearLego)
+	for name, frame in pairs(frames) do
+		local posDB = db.position[name]
+		
+		local s = frame:GetEffectiveScale()
+		posDB.x = frame:GetLeft() * s
+		posDB.y = frame:GetTop()  * s
+		posDB.s = s
+		
+		local rel = select(2, frame:GetPoint())
+		if frame.stickPoint and rel and rel ~= UIParent then
+			posDB.stickPoint = frame.stickPoint
+			posDB.relative = rel:GetName()
+		end
+		
+		if clearLego then
+			local legoDB = db.blockDB[name]
+			legoDB.stickPoint = nil
+			legoDB.relative = nil
+		end
+	end
+end
+
+function Fortress:LoadFramePos(name, frame)
+	local posDB = db.position[name]
+	local s = frame:GetEffectiveScale()
+	
+	local x, y = posDB.x / s, posDB.y / s
+	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
+end
+
+function Fortress:LoadFramePositions()
+	for name, frame in pairs(frames) do
+		self:LoadFramePos(name, frame)
 	end
 end
 
