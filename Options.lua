@@ -508,11 +508,31 @@ local function ChatCmd(input)
 	end
 end
 
+-- And another "Don't do this at home" )-:
+local function HackDBOptions(dbOpt)
+	local handler = dbOpt.handler
+	
+	local origSetProfile = handler.SetProfile
+	handler.SetProfile = function(...)
+		Fortress:OnProfileShutdown()
+		return origSetProfile(...)
+	end
+	
+	local origCopyProfile = handler.CopyProfile
+	handler.CopyProfile = function(...)
+		Fortress:OnProfileShutdown()
+		return origCopyProfile(...)
+	end
+end
+
 function Fortress:RegisterOptions()
 	db = assert(self.db.profile)	-- assert to ensure that AceDB:New() gets called before this function
 	self.optionsFrames = {}
 	
-	options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	local dbOpt = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	HackDBOptions(dbOpt) -- )-:
+	options.args.profiles = dbOpt
+	--options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	CreatePluginOptions()
 	
 	AceCfgReg:RegisterOptionsTable(appName, options)

@@ -294,6 +294,8 @@ function Fortress:OnInitialize()
 			position = {
 				['*'] = {},
 			},
+			frameLinks = {			
+			},
 			enabled = true,
 			hideAllOnMouseOut = false,
 			ignoreLaunchers = false,
@@ -333,7 +335,7 @@ function Fortress:OnDisable()
 	end
 end
 
-local BlockToUpdate
+--[[local BlockToUpdate
 local UpdaterFrame = CreateFrame("Frame")
 UpdaterFrame.elapsed = 0
 UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -350,7 +352,7 @@ UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
 		
 --		self.elapsed = 0
 --	end
-end)
+end)]]
 
 local function ClearFortressFrames(tbl)
 	for frame in pairs(tbl) do
@@ -379,8 +381,10 @@ function Fortress:Refresh()
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
 	
-
-	ClearLegoData()
+	--ClearLegoData()
+	
+	self:LoadFramePositions()
+	self:LoadFrameLinks()
 		
 	self:UpdateAllObjects()
 	Debug("Objects updated")
@@ -390,6 +394,14 @@ function Fortress:Refresh()
 	Debug("Launchers updated")
 	
 	FT_PROFILE_DEBUG = nil
+end
+
+function Fortress:OnProfileShutdown()
+	Debug("OnProfileShutdown")
+
+	self:SaveFramePositions(true)
+	self:SaveFrameLinks()
+	ClearLegoData()
 end
 
 --------
@@ -529,6 +541,35 @@ end
 function Fortress:LoadFramePositions()
 	for name, frame in pairs(frames) do
 		self:LoadFramePos(name, frame)
+	end
+end
+
+function Fortress:SaveFrameLinks()
+	local frameLinks = legos.frameLinks
+	for name, frame in pairs(frames) do
+		if frameLinks[frame] then
+			db.frameLinks[name] = {}
+			for link in pairs(frameLinks[frame]) do
+				db.frameLinks[link:GetName()] = true
+			end
+		end
+	end
+end
+
+function Fortress:LoadFrameLinks()
+	local frameLinks = legos.frameLinks
+	for name, links in pairs(db.frameLinks) do
+		local f = _G[name]
+		if f then
+			frameLinks[f] = {}
+			local list = frameLinks[f]
+			for lname in pairs(links) do
+				local lf = _G[lname]
+				if lf then
+					list[lf] = true
+				end
+			end
+		end
 	end
 end
 
