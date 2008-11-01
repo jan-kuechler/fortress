@@ -57,3 +57,5 @@ L["Width"] = true
 L["The width of this plugin in fixed width mode."] = true
 L["Disable tooltip"] = true
 L["Do not show this plugin's tooltip."] = true
+L["Ignore Launchers"] = true
+L["Do not display launcher plugins."] = true
