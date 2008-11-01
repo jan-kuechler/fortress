@@ -22,10 +22,8 @@ local TABLET20_FIX = true
 -- utility functions
 --------
 local function Debug(...)
-	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
+--	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
 end
-
-_G.Fortress = Fortress
 
 local function GetPluginSetting(pluginName, setting)
 	if db.pluginUseMaster[pluginName][setting] then
@@ -332,27 +330,22 @@ function Fortress:OnDisable()
 	end
 end
 
---[[local BlockToUpdate
-local UpdaterFrame = CreateFrame("Frame")
-UpdaterFrame.elapsed = 0
-UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
---	self.elapsed = self.elapsed + elapsed
---	if self.elapsed > 0.01 then
-		BlockToUpdate = next(dataObjects, BlockToUpdate)
-		
-		if not BlockToUpdate then
-			self:Hide()
-		else
-			Debug("Updating", BlockToUpdate)
-			Fortress:UpdateObject(BlockToUpdate)
+local function ClearFortressRefs(tbl, newTab)
+	for frame in pairs(tbl) do
+		local name = frame:GetName()
+		if name and name:find("Fortress") then
+			tbl[frame] = newTab and {} or nil
 		end
-		
---		self.elapsed = 0
---	end
-end)]]
+	end
+end
+
+local function ClearLegoData()
+	ClearFortressRefs(legos.frameLinks, true)
+	ClearFortressRefs(legos.stickiedFrames)
+end
 
 function Fortress:Refresh()
-	FT_PROFILE_DEBUG = true
+	--FT_PROFILE_DEBUG = true
 	db = self.db.profile
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
@@ -362,22 +355,10 @@ function Fortress:Refresh()
 	--self:LoadFramePositions()
 	--self:LoadFrameLinks()
 		
-	--self:UpdateAllObjects()
-	--Debug("Objects updated")
-	UpdaterFrame:Show()
-	
---	self:ToggleLaunchers()
-	Debug("Launchers updated")
-	
-	FT_PROFILE_DEBUG = nil
-end
-
-function Fortress:OnProfileShutdown()
-	Debug("OnProfileShutdown")
-
-	self:SaveFramePositions(true)
-	self:SaveFrameLinks()
-	ClearLegoData()
+	self:UpdateAllObjects()
+	Debug("Objects updated")
+		
+	--FT_PROFILE_DEBUG = nil
 end
 
 --------
@@ -480,72 +461,6 @@ function Fortress:ShowAllObjects(force)
 	for name, frame in pairs(frames) do
 		local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
 		frame:SetAlpha(alpha)
-	end
-end
-
-function Fortress:SaveFramePositions(clearLego)
-	for name, frame in pairs(frames) do
-		local posDB = db.position[name]
-		
-		local s = frame:GetEffectiveScale()
-		posDB.x = frame:GetLeft() * s
-		posDB.y = frame:GetTop()  * s
-		posDB.s = s
-		
-		local rel = select(2, frame:GetPoint())
-		if frame.stickPoint and rel and rel ~= UIParent then
-			posDB.stickPoint = frame.stickPoint
-			posDB.relative = rel:GetName()
-		end
-		
-		if clearLego then
-			local legoDB = db.blockDB[name]
-			legoDB.stickPoint = nil
-			legoDB.relative = nil
-		end
-	end
-end
-
-function Fortress:LoadFramePos(name, frame)
-	local posDB = db.position[name]
-	local s = frame:GetEffectiveScale()
-	
-	local x, y = posDB.x / s, posDB.y / s
-	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, y)
-end
-
-function Fortress:LoadFramePositions()
-	for name, frame in pairs(frames) do
-		self:LoadFramePos(name, frame)
-	end
-end
-
-function Fortress:SaveFrameLinks()
-	local frameLinks = legos.frameLinks
-	for name, frame in pairs(frames) do
-		if frameLinks[frame] then
-			db.frameLinks[name] = {}
-			for link in pairs(frameLinks[frame]) do
-				db.frameLinks[link:GetName()] = true
-			end
-		end
-	end
-end
-
-function Fortress:LoadFrameLinks()
-	local frameLinks = legos.frameLinks
-	for name, links in pairs(db.frameLinks) do
-		local f = _G[name]
-		if f then
-			frameLinks[f] = {}
-			local list = frameLinks[f]
-			for lname in pairs(links) do
-				local lf = _G[lname]
-				if lf then
-					list[lf] = true
-				end
-			end
-		end
 	end
 end
 

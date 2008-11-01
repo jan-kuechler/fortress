@@ -12,8 +12,6 @@ if( not LegoBlock ) then
 	return
 end
 
-local Debug = print
-
 -- Re-use or create new members.
 LegoBlock.legos = LegoBlock.legos or {}
 LegoBlock.restorePositions = LegoBlock.restorePositions or {}
@@ -427,10 +425,6 @@ local function saveFramePositions(frame)
 end
 
 local function reheadFrames(block, newHead)
-	if FT_PROFILE_DEBUG then
-		Debug("Reheading frames for", block.name)
-	end
-
 	if( block == newHead ) then
 		return
 	end
@@ -445,8 +439,8 @@ local function reheadFrames(block, newHead)
 		end
 	end
 end
-
-function LB_DumpLinks()
+--[[
+function dumpLinks()
 	for frame, links in pairs(frameLinks) do
 		local headLB = frame.headLB
 		if( not headLB ) then
@@ -464,7 +458,7 @@ function LB_DumpLinks()
 	end
 
 	Debug("------------")
-end
+end]]--
 
 -- We need to clean this up later, but it works fine for now.
 -- reverse the SetPoint connections (it's a silly linked list)
