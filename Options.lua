@@ -20,7 +20,7 @@ local appName = "Fortress"
 -- utility functions
 --------
 local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
+	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
 end
 
 local function GetPluginSetting(pluginName, setting)
@@ -526,6 +526,29 @@ function Fortress:UpdateOptionsDbRef()
 	db = self.db.profile
 end
 
+local function Swap(tab, a, b)
+	Debug("Swapping", a, tab[a].name, "and", b, tab[b].name)
+	local tmp = tab[a]
+	tab[a] = tab[b]
+	tab[b] = tmp
+end
+
+local function SortSubCategories(parent)
+	local list = INTERFACEOPTIONS_ADDONCATEGORIES
+	local done = true
+	for i=1, #list-1 do
+		if (list[i].parent == parent) and (list[i+1].parent == parent) then
+			if list[i].name > list[i+1].name then
+				Swap(list, i, i+1)
+				done = false
+			end
+		end
+	end
+	if not done then
+		SortSubCategories(parent)
+	end
+end
+
 function Fortress:AddObjectOptions(name)
 	local t = self.optionsFrames[name] or {}
 	t.name = name
@@ -537,4 +560,6 @@ function Fortress:AddObjectOptions(name)
 	t.set  = PluginSet
 	AceCfgReg:RegisterOptionsTable("Fortress"..name, t)
 	AceCfgDlg:AddToBlizOptions("Fortress"..name, name, "Fortress")
+	
+	SortSubCategories("Fortress")
 end
