@@ -148,6 +148,23 @@ local function Block_OnLeave(self)
 	end
 end
 
+local function Block_OnClick(self, ...)
+	local obj  = self.obj
+	local name = self.name
+	
+	if obj.OnLeave then
+		obj.OnLeave(self)
+	elseif obj.tooltiptext or obj.OnTooltipShow then
+		GT_OnLeave(GameTooltip)
+	elseif obj.tooltip then
+		obj.tooltip:Hide()
+	end
+	
+	if obj.OnClick then
+		obj.OnClick(self, ...)
+	end
+end
+
 --------
 -- block updaters
 --------
@@ -232,9 +249,9 @@ local uniqueUpdaters = {
 		end
 	end,
 	
-	OnClick = function(frame, value, name)
-		frame:SetScript("OnClick", value)
-	end,
+--	OnClick = function(frame, value, name)
+--		frame:SetScript("OnClick", value)
+--	end,
 }
 
 local updaters = {
@@ -408,6 +425,7 @@ function Fortress:EnableDataObject(name)
 	frame.obj  = obj
 	frame.db   = db.pluginSettings[name]
 		
+	frame:SetScript("OnClick", Block_OnClick)
 	frame:SetScript("OnEnter", Block_OnEnter)
 	frame:SetScript("OnLeave", Block_OnLeave)
 	frame:RegisterForClicks("LeftButtonUp","RightButtonUp")
