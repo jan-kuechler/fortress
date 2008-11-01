@@ -418,6 +418,11 @@ local newFrameOffset = -50
 function Fortress:EnableDataObject(name)
 	local obj = dataObjects[name]
 	db.pluginSettings[name].enabled = true
+	
+	if obj.secureTemplates then
+		db.blockDB[name].appendString = obj.secureTemplates
+	end
+	
 	-- create frame for object
 	local frame = frames[name] or legos:New("Fortress"..name, nil, nil, db.blockDB[name])
 	frames[name] = frame
@@ -443,6 +448,10 @@ function Fortress:EnableDataObject(name)
 	frame:Show()
 	
 	broker.RegisterCallback(self, "LibDataBroker_AttributeChanged_"..name, "AttributeChanged")
+	
+	if obj.OnCreate then
+		obj.OnCreate(obj, frame)
+	end
 end
 
 function Fortress:DisableDataObject(name)
