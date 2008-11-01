@@ -289,10 +289,7 @@ function Fortress:OnInitialize()
 				hideOnMouseOut      = false,	
 			},
 			pluginUseMaster = {
-				['*'] = {},
-			},
-			position = {
-				['*'] = {},
+				['*'] = {}
 			},
 			frameLinks = {			
 			},
@@ -354,43 +351,22 @@ UpdaterFrame:SetScript("OnUpdate", function(self, elapsed)
 --	end
 end)]]
 
-local function ClearFortressFrames(tbl)
-	for frame in pairs(tbl) do
-		local name = frame:GetName()
-		if name and name:find("Fortress") then
-			tbl[frame] = nil
-		end	
-	end
-end
-
-local function ClearLegoData()
-	ClearFortressFrames(legos.frameLinks)
-	ClearFortressFrames(legos.stickiedFrames)
-	for frame, links in pairs(legos.frameLinks) do
-		ClearFortressFrames(links)
-	end
-	for k, v in pairs(db.blockDB) do
-		v.stickPoint = nil
-		v.relative = nil
-	end
-end
-
 function Fortress:Refresh()
 	FT_PROFILE_DEBUG = true
 	db = self.db.profile
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
 	
-	--ClearLegoData()
+	ClearLegoData()
 	
-	self:LoadFramePositions()
-	self:LoadFrameLinks()
+	--self:LoadFramePositions()
+	--self:LoadFrameLinks()
 		
-	self:UpdateAllObjects()
-	Debug("Objects updated")
-	--UpdaterFrame:Show()
+	--self:UpdateAllObjects()
+	--Debug("Objects updated")
+	UpdaterFrame:Show()
 	
-	self:ToggleLaunchers()
+--	self:ToggleLaunchers()
 	Debug("Launchers updated")
 	
 	FT_PROFILE_DEBUG = nil
