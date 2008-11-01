@@ -20,7 +20,7 @@ local appName = "Fortress"
 -- utility functions
 --------
 local function Debug(...)
-	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
+--	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
 end
 
 local function GetPluginSetting(pluginName, setting)
