@@ -6,12 +6,7 @@ local AceCfgReg = LibStub("AceConfigRegistry-3.0")
 local AceCfgDlg = LibStub("AceConfigDialog-3.0")
 local AceCfgCmd = LibStub("AceConfigCmd-3.0")
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Fortress")
---local L = newproxy(true)
---getmetatable(L).__index = function(self, key)
---	return key
---end
 
 local db
 local appName = "Fortress"
@@ -599,7 +594,6 @@ function Fortress:UpdateOptionsDbRef()
 end
 
 local function Swap(tab, a, b)
-	Debug("Swapping", a, tab[a].name, "and", b, tab[b].name)
 	local tmp = tab[a]
 	tab[a] = tab[b]
 	tab[b] = tmp
