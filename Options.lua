@@ -610,7 +610,7 @@ local function SortSubCategories(parent)
 	local done = true
 	for i=1, #list-1 do
 		if (list[i].parent == parent) and (list[i+1].parent == parent) then
-			if list[i].name > list[i+1].name then
+			if list[i].name:lower() > list[i+1].name:lower() then
 				Swap(list, i, i+1)
 				done = false
 			end
