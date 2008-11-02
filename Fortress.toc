@@ -4,8 +4,8 @@
 ## Author: andreasg, Borlox
 ## Version: @project-version@ 
 ## X-Email: kuchen_@gmx.de
-## OptionalDeps: Ace3, LibDataBroker-1.1, LegoBlock
-## X-Embeds: Ace3, LibDataBroker-1.1, LegoBlock
+## OptionalDeps: Ace3, LibDataBroker-1.1, LegoBlock, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
+## X-Embeds: Ace3, LibDataBroker-1.1, LegoBlock, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
 
 ## SavedVariables: FortressDB
 

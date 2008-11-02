@@ -60,6 +60,21 @@ L["Disable tooltip"] = "Tooltip ausschalten"
 L["Do not show this plugin's tooltip."] = "Den Tooltip dieses Plugins niemals anzeigen."
 L["Ignore Launchers"] = "Schnellstarter ignorieren"
 L["Do not display launcher plugins."] = "Schnellstarter Plugins nicht anzeigen."
+L["Font"] = "Schriftart"
+L["The font for the plugin text."] = "Die Schriftart f\195\188r den Text des Plugins."
+L["Background"] = "Hintergrund"
+L["The background for the plugin."] = "Das Hintergrundbild f\195\188r das Plugin."
+L["Border"] = "Rahmen"
+L["The border texture for the plugin. Use 'None' to show no border."] = "Die Rahmentextur f\195\188r das Plugin. Um keinen Rahmen anzuzeigen 'None' ausw\195\164hlen."
+L["Tiled background"] = "Gekachelter Hintergrund"
+L["Use tiled background."] = "Das Hintergrundbild kacheln."
+L["Tile size"] = "Kachelgr\195\182\195\159e"
+L["The size for the background tiles."] = "Die Gr\195\182\195\159e der Hintergrundkacheln."
+--L["Edge size"] = true
+--L["The size for the edges."] = true
+L["Block Height"] = "Blockh\195\182he"
+L["Adjusts the plugin's height."] = "\195\132ndert die H\195\182he des Plugins."
+
 --[[
 
 Ä: \195\132 ä: \195\164

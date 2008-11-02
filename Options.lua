@@ -237,11 +237,11 @@ local pluginSettings = {
 			name = L["Show Icon"],
 			desc = L["Show the plugin's icon."],
 		},
-		{
-			key = "showBorder",
-			name = L["Show Border"],
-			desc = L["Show the plugin's border."],
-		},
+		--{
+		--	key = "showBorder",
+		--	name = L["Show Border"],
+		--	desc = L["Show the plugin's border."],
+		--},
 	},
 	{
 		{
@@ -260,6 +260,14 @@ local pluginSettings = {
 			max  = 2,
 			step = .01,
 			isPercent = true,
+		},
+		{
+			key = "blockHeight",
+			name = L["Block Height"],
+			desc = L["Adjusts the plugin's height."],
+			min  = 20,
+			max  = 50,
+			step =  1,
 		},
 		{
 			key = "blockAlpha",
@@ -310,7 +318,7 @@ local pluginSettings = {
 			desc = L["The width of this plugin in fixed width mode."],
 			min = 10,
 			max = 600,
-			step = 10,
+			step = 1,
 			disabled = function(info)
 				local name = GetAppName(info.appName)
 				return not GetPluginSetting(name, "fixedWidth")
@@ -348,6 +356,65 @@ local pluginSettings = {
 			name = L["Suffix Color"],
 			desc = L["The suffix color."],
 		},
+	},
+	{
+		{
+			key = "font",
+			name = L["Font"],
+			desc = L["The font for the plugin text."],
+			dialogControl = "LSM30_Font",
+			values = AceGUIWidgetLSMlists.font,
+		},
+		{
+			key = "background",
+			name = L["Background"],
+			desc = L["The background for the plugin."],
+			dialogControl = "LSM30_Background",
+			values = AceGUIWidgetLSMlists.background,
+		},
+		{
+			key = "border",
+			name = L["Border"],
+			desc = L["The border texture for the plugin. Use 'None' to show no border."],
+			dialogControl = "LSM30_Border",		
+			values = AceGUIWidgetLSMlists.border,
+		},
+		{
+			key = "bgTiled",
+			name = L["Tiled background"],
+			desc = L["Use tiled background."],
+		},
+		{
+			key = "bgTileSize",
+			name = L["Tile size"],
+			desc = L["The size for the background tiles."],
+			min  = 1,
+			max  = 25,
+			step = 1,
+			disabled = function(info)
+				local name = GetAppName(info.appName)
+				return not GetPluginSetting(name, "bgTiled")
+			end,
+			masterDisabled = function(info)
+				return not db.masterSettings.bgTiled
+			end,			
+		},
+		--{
+		--	key = "edgeSize",
+		--	name = L["Edge size"],
+		--	desc = L["The size for the edges."],
+		--	min  = 1,
+		--	max  = 25,
+		--	step = 1,
+		--},
+		--{
+		--	key = "insets",
+		--	name = L["Insets"],
+		--	desc = L["The border insets."],
+		--	min  = 0,
+		--	max  = 10,
+		--	step = 1,
+		--},
 	},
 }
 
@@ -393,6 +460,7 @@ local typeToType = {
 	boolean = "toggle",
 	table   = "color",
 	number  = "range",
+	string  = "select",
 }
 
 local function CreatePluginOptions()
@@ -464,6 +532,8 @@ local function CreatePluginOptions()
 				step = setting.step,
 				isPercent = setting.isPercent,
 				order = ii,
+				dialogControl = setting.dialogControl,
+				values        = setting.values,
 			}
 			
 			masterArgs[key] = {
@@ -480,6 +550,8 @@ local function CreatePluginOptions()
 				step = setting.step,
 				isPercent = setting.isPercent,
 				order = ii,
+				dialogControl = setting.dialogControl,
+				values        = setting.values,
 			}
 			
 			useMasterArgs[key] = {

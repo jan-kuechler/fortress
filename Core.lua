@@ -4,12 +4,15 @@ local Fortress = LibStub("AceAddon-3.0"):NewAddon("Fortress", "AceConsole-3.0", 
 
 local broker = LibStub("LibDataBroker-1.1")
 local legos  = LibStub("LegoBlock-Beta1")
+local media  = LibStub("LibSharedMedia-3.0")
 
 local db
 
-local frames = {}
+local frames      = {}
 local dataObjects = {}
-local strTable = {}
+local strTable    = {}
+local backdrops   = {}
+local insets      = {}
 
 -- Change this line to
 -- local TABLET20_FIX = false
@@ -290,10 +293,11 @@ function Fortress:OnInitialize()
 
 				fontSize    = 12,
 				blockScale  = 1,
+				blockHeight = 24,
 				blockAlpha  = 1,
 				blockLocked = false,
 				
-				showBorder  = true,
+				--showBorder  = true,
 				
 				fixedWidth = false,
 				blockWidth = 100,
@@ -302,6 +306,15 @@ function Fortress:OnInitialize()
 				disableTooltip      = false,
 				hideTooltipInCombat = false,
 				hideOnMouseOut      = false,	
+				
+				font       = "Friz Quadrata TT",
+				background = "Blizzard Tooltip",
+				border     = "Blizzard Tooltip",
+				
+				bgTiled    = true,
+				bgTileSize = 16,
+				edgeSize   = 16,
+				insets     =  5,
 			},
 			pluginUseMaster = {
 				['*'] = {}
@@ -516,7 +529,7 @@ function Fortress:UpdateObject(name, obj)
 		
 		db.blockDB[name].locked = GetPluginSetting(name, "blockLocked")
 
-		self:UpdateBorder(name)
+		self:UpdateBackdrop(name)
 		self:UpdateColor(name)
 		self:UpdateFontAndSize(name)
 	end
@@ -536,11 +549,14 @@ end
 
 function Fortress:UpdateFontAndSize(name)
 	local frame = frames[name]
-	local fontName = frame.text:GetFont()
+	local fontName = GetPluginSetting(name, "font")
 	local fontSize = GetPluginSetting(name, "fontSize")
 	local scale    = GetPluginSetting(name, "blockScale")
+	local height   = GetPluginSetting(name, "blockHeight")
 	
-	frame.text:SetFont(fontName, fontSize)
+	local font = media:Fetch(media.MediaType.FONT, fontName)
+	
+	frame.text:SetFont(font, fontSize)
 	frame:SetScale(scale)
 	db.blockDB[name].scale = scale -- let LegoBlock use this scale on next login
 	
@@ -554,33 +570,54 @@ function Fortress:UpdateFontAndSize(name)
 		db.blockDB[name].width = nil
 		frame:SetDB(db.blockDB[name]) -- update the width
 	end
+	
+	frame:SetHeight(height)
+	frame.optionsTbl.height = height
 end
 
-local	backdropBorder = {
-	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-	edgeSize = 16,
-	insets = {left = 5, right = 5, top = 5, bottom = 5},
-	tile = true, tileSize = 16,
-}
-local	backdropNoBorder = {
-	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	insets = {left = 0, right = 0, top = 0, bottom = 0},
-	tile = true, tileSize = 16,
-}
+local insets_default = {left = 0, right = 0, top = 0, bottom = 0}
 
-function Fortress:UpdateBorder(name)
+function Fortress:UpdateBackdrop(name)
 	local frame = frames[name]
+	local backdrop = backdrops[name]
 	
-	if GetPluginSetting(name, "showBorder") then
-		frame:SetBackdrop(backdropBorder)
+	if not backdrop then
+		backdrops[name] = {}
+		backdrop = backdrops[name]
+	end
+	
+	local background = GetPluginSetting(name, "background")
+	local border     = GetPluginSetting(name, "border")
+		
+	backdrop.bgFile   = media:Fetch(media.MediaType.BACKGROUND, background)
+	backdrop.tile     = GetPluginSetting(name, "bgTiled")
+	backdrop.tileSize = GetPluginSetting(name, "bgTileSize")
+	
+	if border == "None" then
+		backdrop.insets   = insets_default
+		backdrop.edgeFile = nil
+		backdrop.edgeSize = nil
+		
+		frame.icon:SetPoint("LEFT", 4, 0)
+		frame.optionsTbl.width = 0
+	else
+		local insetSize = GetPluginSetting(name, "insets")
+		local i = insets[insetSize]
+		
+		if not i then
+			i = {left = insetSize, right = insetSize, top = insetSize, bottom = insetSize}
+			insets[insetSize] = i
+		end
+		
+		backdrop.insets   = i
+		backdrop.edgeFile = media:Fetch(media.MediaType.BORDER, border)
+		backdrop.edgeSize = GetPluginSetting(name, "edgeSize")
+		
 		frame.optionsTbl.width = 8
 		frame.icon:SetPoint("LEFT", 8, 0)
-	else
-		frame:SetBackdrop(backdropNoBorder)
-		frame.optionsTbl.width = 0
-		frame.icon:SetPoint("LEFT", 4, 0)	
 	end
+	
+	frame:SetBackdrop(backdrop)
 end
 
 function Fortress:ToggleLaunchers()
