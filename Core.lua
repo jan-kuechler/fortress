@@ -19,7 +19,7 @@ local insets      = {}
 -- to disable the fix for Tablet-2.0 tooltips,
 -- that may prevent the tooltip to be shown for
 -- certain plugins.
-local TABLET20_FIX = true
+local TABLET20_FIX = false
 
 --------
 -- utility functions
