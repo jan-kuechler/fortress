@@ -55,13 +55,61 @@ local function RGBToHex(r, g, b)
 	return ("%02x%02x%02x"):format(r*255, g*255, b*255)	
 end
 
+local function ShowBlocks(block, name)
+	if db.hideAllOnMouseOut then
+		Fortress:ShowAllObjects()
+	elseif db.showLinked then
+		Fortress:ShowLinked(block)
+	else
+		block:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+	end
+end
+
 local function HideBlocks(block, name)
 	if db.hideAllOnMouseOut then
 		Fortress:HideAllObjects()
+	elseif db.showLinked then
+		Fortress:HideLinked(block)
 	elseif GetPluginSetting(name, "hideOnMouseOut") then
 		block:SetAlpha(0)
 	end
 end
+
+--------
+-- LegoBlock hacks )-:
+--------
+local function ClearFortressRefs(tbl, newTab)
+	for frame in pairs(tbl) do
+		local name = frame:GetName()
+		if name and name:find("Fortress") then
+			tbl[frame] = newTab and {} or nil
+		end
+	end
+end
+
+-- used in Fortress:Refresh()
+local function ClearLegoData()
+	ClearFortressRefs(legos.frameLinks, true)
+	ClearFortressRefs(legos.stickiedFrames)
+end
+
+local function BlockIsLinked(block, other)
+	local head1, head2 = block.headLB, other.headLB
+	
+	if not head1 and not head2 then
+		return false
+	elseif head1 == head2 then
+		return true
+	elseif head1 == other then
+		return true
+	elseif head2 == block then
+		return true
+	else
+		return false
+	end
+end
+
+_G.FT_BIL = BlockIsLinked
 
 --------
 -- Tooltip handling
@@ -95,11 +143,12 @@ local function Block_OnEnter(self)
 	local obj  = self.obj
 	local name = self.name
 		
-	if db.hideAllOnMouseOut then
-		Fortress:ShowAllObjects()
-	else
-		self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
-	end
+	--if db.hideAllOnMouseOut then
+	--	Fortress:ShowAllObjects()
+	--else
+	--	self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+	--end
+	ShowBlocks(self, name)
 	
 	if TABLET20_FIX and self:GetScript("OnEnter") ~= Block_OnEnter then
 		self:SetScript("OnEnter", Block_OnEnter)
@@ -324,6 +373,7 @@ function Fortress:OnInitialize()
 			enabled = true,
 			hideAllOnMouseOut = false,
 			ignoreLaunchers = false,
+			showLinked = false,
 		},
 	}
 	local defaults = self.defaults
@@ -358,20 +408,6 @@ function Fortress:OnDisable()
 	for _, f in pairs(frames) do
 		f:Hide()
 	end
-end
-
-local function ClearFortressRefs(tbl, newTab)
-	for frame in pairs(tbl) do
-		local name = frame:GetName()
-		if name and name:find("Fortress") then
-			tbl[frame] = newTab and {} or nil
-		end
-	end
-end
-
-local function ClearLegoData()
-	ClearFortressRefs(legos.frameLinks, true)
-	ClearFortressRefs(legos.stickiedFrames)
 end
 
 function Fortress:Refresh()
@@ -501,6 +537,39 @@ function Fortress:ShowAllObjects(force)
 	for name, frame in pairs(frames) do
 		local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
 		frame:SetAlpha(alpha)
+	end
+end
+
+local linkedBlocks = {}
+function Fortress:ShowLinked(block, force)
+	local i = 1
+	for name, frame in pairs(frames) do
+		if frame == block or BlockIsLinked(block, frame) then
+			local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
+			frame:SetAlpha(alpha)
+			linkedBlocks[i] = frame
+			i = i + 1
+		end
+	end
+	local num = #linkedBlocks
+	while i <= num do
+		linkedBlocks[i] = nil
+		i = i + 1
+	end
+end
+
+function Fortress:HideLinked(block)
+	if #linkedBlocks then
+		for i, frame in ipairs(linkedBlocks) do
+			frame:SetAlpha(0)
+			linkedBlocks[i] = nil
+		end
+	else
+		for name, frame in pairs(frames) do
+			if frame == block or BlockIsLinked(block, frame) then
+				frame:SetAlpha(0)
+			end		
+		end
 	end
 end
 

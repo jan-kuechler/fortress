@@ -163,6 +163,7 @@ local options = {
 							Fortress:Disable()
 						end
 					end,
+					order = 2,
 				},
 				showAllPlugins = {
 					name = L["Show all plugins"],
@@ -171,6 +172,7 @@ local options = {
 					func = function(info)
 						Fortress:ShowAllObjects(true)
 					end,
+					order = 1,
 				},
 				hideAllOnMouseOut = {
 					name = L["Hide all on mouse out"],
@@ -185,6 +187,22 @@ local options = {
 							Fortress:ShowAllObjects()
 						end
 					end,
+					order = 3,
+				},
+				showLinked = {
+					name = L["Show Linked"],
+					desc = L["Show all linked blocks when the mouse is over one, hide them otherwise."],
+					type = "toggle",
+					set  = function(info, value)
+						DefaultSet(info, value)
+						
+						if value then
+							Fortress:HideAllObjects()
+						else
+							Fortress:ShowAllObjects()
+						end
+					end,
+					order = 4,
 				},
 				ignoreLaunchers = {
 					name = L["Ignore Launchers"],
@@ -194,6 +212,7 @@ local options = {
 						DefaultSet(info, value)
 						Fortress:ToggleLaunchers()
 					end,
+					order = 5,
 				},
 			},
 		},

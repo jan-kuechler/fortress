@@ -73,3 +73,5 @@ L["Edge size"] = true
 L["The size for the edges."] = true
 L["Block Height"] = true
 L["Adjusts the plugin's height."] = true
+L["Show Linked"] = true
+L["Show all linked blocks when the mouse is over one, hide them otherwise."] = true

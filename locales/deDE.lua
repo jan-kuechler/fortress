@@ -74,6 +74,8 @@ L["The size for the background tiles."] = "Die Gr\195\182\195\159e der Hintergru
 --L["The size for the edges."] = true
 L["Block Height"] = "Blockh\195\182he"
 L["Adjusts the plugin's height."] = "\195\132ndert die H\195\182he des Plugins."
+L["Show Linked"] = "Zusammenh\195\164ngende anzeigen"
+L["Show all linked blocks when the mouse is over one, hide them otherwise."] = "Alle zusammenh\195\164ngende Plugins anzeigen, wenn die Maus \195\188ber einem ist, ansonsten alle verstecken."
 
 --[[
 
