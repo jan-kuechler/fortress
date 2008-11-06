@@ -26,13 +26,12 @@ local function GetPluginSetting(pluginName, setting)
 	end
 end
 
---------
--- db getter/setter
---------
 local function GetAppName(name)
 	return string.gsub(name, "Fortress", "")
 end
-
+--------
+-- db getter/setter
+--------
 local function DefaultGet(info)
 	return db[info.arg or info[#info]] 
 end
@@ -443,6 +442,10 @@ local pluginOptions = {
 				Fortress:DisableDataObject(name)
 			end
 		end, 
+		disabled = function(info)
+			local name = GetAppName(info.appName)
+			return db.ignoreLaunchers and Fortress:IsLauncher(name)
+		end,
 		order = 0,
 	},
 }
@@ -472,39 +475,68 @@ local typeToType = {
 	string  = "select",
 }
 
+local function CopyTable(tab, deep)
+	local ret = {}
+	for k, v in pairs(tab) do
+		if deep and type(v) == "table" then
+			ret[k] = CopyTable(v, deep)
+		else
+			ret[k] = v
+		end
+	end
+	return ret
+end
+
 local function CreatePluginOptions()
 	local optType = Fortress.defaults.profile.masterSettings
 
 	for i, group in ipairs(pluginSettings) do
-		local optionsGroup = {
+		local groupName = "group" .. i
+		local groupTable = {
 			name   = group.name or "",
 			inline = true,
 			type   = "group",
 			order  = i,
 			args   = {},
 		}
-		optionsArgs = optionsGroup.args
-		pluginOptions["group"..i] = optionsGroup
-
-		local masterGroup = {
-			name   = group.name or "",
-			inline = true,
-			type   = "group",
-			order  = i,
-			args   = {},   
-		}
-		local masterArgs = masterGroup.args
-		options.args.masterPluginSettings.args["group"..i] = masterGroup
+		local tmp
+	
+		--local optionsGroup = {
+		--	name   = group.name or "",
+		--	inline = true,
+		--	type   = "group",
+		--	order  = i,
+		--	args   = {},
+		--}
+		--optionsArgs = optionsGroup.args
 		
-		local useMasterGroup = {
-			name   = group.name or "",
-			inline = true,
-			type   = "group",
-			order  = i,
-			args   = {},   
-		}
-		useMasterArgs = useMasterGroup.args
-		pluginUseMasterOptions["group"..i] = useMasterGroup
+		tmp = CopyTable(groupTable, true)
+		pluginOptions[groupName] = tmp
+		local optionsArgs = tmp.args
+		
+		--local masterGroup = {
+		--	name   = group.name or "",
+		--	inline = true,
+		--	type   = "group",
+		--	order  = i,
+		--	args   = {},   
+		--}
+		--local masterArgs = masterGroup.args
+		tmp = CopyTable(groupTable, true)
+		options.args.masterPluginSettings.args[groupName] = tmp
+		local masterArgs = tmp.args
+		
+		--local useMasterGroup = {
+		--	name   = group.name or "",
+		--	inline = true,
+		--	type   = "group",
+		--	order  = i,
+		--	args   = {},   
+		--}
+		--useMasterArgs = useMasterGroup.args
+		tmp = groupTable
+		pluginUseMasterOptions[groupName] = tmp
+		local useMasterArgs = tmp.args
 
 		for ii, setting in ipairs(group) do
 			local key = setting.key
@@ -527,7 +559,7 @@ local function CreatePluginOptions()
 			get = setting.get or get
 			set = setting.set or set
 			
-			optionsArgs[key] = {
+			local opt = {
 				type = t,
 				name = setting.name,
 				desc = setting.desc,
@@ -544,8 +576,33 @@ local function CreatePluginOptions()
 				dialogControl = setting.dialogControl,
 				values        = setting.values,
 			}
+			optionsArgs[key] = opt
 			
-			masterArgs[key] = {
+			local masterOpt = CopyTable(opt)
+			masterOpt.get = mget
+			masterOpt.set = mset
+			masterOpt.disabled = setting.masterDisabled
+			masterArgs[key] = masterOpt			
+			
+			--[[optionsArgs[key] = {
+				type = t,
+				name = setting.name,
+				desc = setting.desc,
+				get  = get,
+				set  = set,
+				disabled = setting.disabled,
+				hidden = setting.hidden,
+				hasAlpha = setting.hasAlpha,
+				min  = setting.min,
+				max  = setting.max,
+				step = setting.step,
+				isPercent = setting.isPercent,
+				order = ii,
+				dialogControl = setting.dialogControl,
+				values        = setting.values,
+			}]]
+			
+			--[[masterArgs[key] = {
 				type = t,
 				name = setting.name,
 				desc = setting.desc,
@@ -561,7 +618,7 @@ local function CreatePluginOptions()
 				order = ii,
 				dialogControl = setting.dialogControl,
 				values        = setting.values,
-			}
+			}]]
 			
 			useMasterArgs[key] = {
 				type = "toggle",

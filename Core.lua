@@ -685,6 +685,10 @@ function Fortress:UpdateBackdrop(name)
 	frame:SetBackdrop(backdrop)
 end
 
+function Fortress:IsLauncher(name)
+	return dataObjects[name] and dataObjects[name].type == "launcher"
+end
+
 function Fortress:ToggleLaunchers()	
 	local func = db.ignoreLaunchers and self.DisableDataObject or self.EnableDataObject
 	for name, obj in pairs(dataObjects) do
