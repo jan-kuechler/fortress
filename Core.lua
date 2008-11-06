@@ -14,13 +14,6 @@ local strTable    = {}
 local backdrops   = {}
 local insets      = {}
 
--- Change this line to
--- local TABLET20_FIX = false
--- to disable the fix for Tablet-2.0 tooltips,
--- that may prevent the tooltip to be shown for
--- certain plugins.
-local TABLET20_FIX = false
-
 --------
 -- utility functions
 --------
@@ -75,6 +68,18 @@ local function HideBlocks(block, name)
 	end
 end
 
+local SetNewBlockPosition
+do
+	local newFrameOffset = -50
+	
+	function SetNewBlockPosition(frame, db)
+		db.x, db.y = 0, newFrameOffset
+		db.anchor  = "TOP"
+		
+		newFrameOffset = newFrameOffset - 2*frame:GetHeight()	
+	end
+end
+
 --------
 -- LegoBlock hacks )-:
 --------
@@ -109,8 +114,6 @@ local function BlockIsLinked(block, other)
 	end
 end
 
-_G.FT_BIL = BlockIsLinked
-
 --------
 -- Tooltip handling
 --------
@@ -143,17 +146,8 @@ local function Block_OnEnter(self)
 	local obj  = self.obj
 	local name = self.name
 		
-	--if db.hideAllOnMouseOut then
-	--	Fortress:ShowAllObjects()
-	--else
-	--	self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
-	--end
 	ShowBlocks(self, name)
-	
-	if TABLET20_FIX and self:GetScript("OnEnter") ~= Block_OnEnter then
-		self:SetScript("OnEnter", Block_OnEnter)
-	end
-	
+		
 	if GetPluginSetting(name, "disableTooltip") then
 		return
 	end
@@ -300,10 +294,6 @@ local uniqueUpdaters = {
 			tt:SetText(object.tooltiptext)
 		end
 	end,
-	
---	OnClick = function(frame, value, name)
---		frame:SetScript("OnClick", value)
---	end,
 }
 
 local updaters = {
@@ -345,8 +335,6 @@ function Fortress:OnInitialize()
 				blockHeight = 24,
 				blockAlpha  = 1,
 				blockLocked = false,
-				
-				--showBorder  = true,
 				
 				fixedWidth = false,
 				blockWidth = 100,
@@ -411,20 +399,14 @@ function Fortress:OnDisable()
 end
 
 function Fortress:Refresh()
-	--FT_PROFILE_DEBUG = true
 	db = self.db.profile
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
 	
 	ClearLegoData()
-	
-	--self:LoadFramePositions()
-	--self:LoadFrameLinks()
-		
+			
 	self:UpdateAllObjects()
 	Debug("Objects updated")
-		
-	--FT_PROFILE_DEBUG = nil
 end
 
 --------
@@ -434,22 +416,13 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	Debug("Dataobject Registered:", name)
 	
 	local t = obj.type
-	if t == "launcher" and db.ignoreLaunchers then
-		return
-	end	
 	-- support data objects without type set, allthough that's not correct
 	if t and (t ~= "data source" and t ~= "launcher") then
 		Debug("Unknown type", t, name)
 		return
 	end
-	
-	if not dataObjects[name] then
-		dataObjects[name] = obj
-	end		
-	if db.pluginSettings[name].enabled then
-		self:EnableDataObject(name)
-	end
-	self:AddObjectOptions(name)
+
+	self:CreateDataObject(name, obj)
 end
 
 function Fortress:AttributeChanged(event, name, key, value)
@@ -463,9 +436,44 @@ function Fortress:AttributeChanged(event, name, key, value)
 	end
 end
 
-local newFrameOffset = -50
+--------
+-- Event handling
+--------
+function Fortress:PLAYER_REGEN_DISABLED()
+	for name, frame in pairs(frames) do
+		if GetPluginSetting(name, "hideInCombat") then
+			frame:Hide()
+		end
+	end
+end
+
+function Fortress:PLAYER_REGEN_ENABLED()
+	for _, f in pairs(frames) do
+		if f.db.enabled then
+			f:Show()
+		end
+	end
+end
+
+--------
+-- Object handling 
+--------
+function Fortress:CreateDataObject(name, obj)
+	if dataObjects[name] then return end
+	
+	dataObjects[name] = obj
+	self:AddObjectOptions(name)
+	if db.pluginSettings[name].enabled then
+		self:EnableDataObject(name)
+	end
+end
+
 function Fortress:EnableDataObject(name)
 	local obj = dataObjects[name]
+	if obj.type == "launcher" and db.ignoreLaunchers then
+		return
+	end
+	
 	db.pluginSettings[name].enabled = true
 	
 	if obj.secureTemplates then
@@ -473,7 +481,7 @@ function Fortress:EnableDataObject(name)
 	end
 	
 	-- create frame for object
-	local frame = frames[name] or legos:New("Fortress"..name, nil, nil, db.blockDB[name])
+	local frame  = frames[name] or legos:New("Fortress"..name, nil, nil, db.blockDB[name])
 	frames[name] = frame
 	frame.name = name
 	frame.obj  = obj
@@ -482,15 +490,12 @@ function Fortress:EnableDataObject(name)
 	frame:SetScript("OnClick", Block_OnClick)
 	frame:SetScript("OnEnter", Block_OnEnter)
 	frame:SetScript("OnLeave", Block_OnLeave)
-	frame:RegisterForClicks("LeftButtonUp","RightButtonUp")
+	frame:RegisterForClicks("AnyUp")
 		
 	-- cascade new frames (very basic way)
 	local blockDB = db.blockDB[name]
 	if not (blockDB.x or blockDB.stickPoint) then
-		blockDB.x, blockDB.y = 0, newFrameOffset
-		blockDB.anchor = "TOP"
-		
-		newFrameOffset = newFrameOffset - 2*frame:GetHeight()
+		SetNewBlockPosition(frame, blockDB)
 	end
 
 	self:UpdateObject(name, obj)	
@@ -511,22 +516,9 @@ function Fortress:DisableDataObject(name)
 	end
 end
 
-function Fortress:PLAYER_REGEN_DISABLED()
-	for name, frame in pairs(frames) do
-		if GetPluginSetting(name, "hideInCombat") then
-			frame:Hide()
-		end
-	end
-end
-
-function Fortress:PLAYER_REGEN_ENABLED()
-	for _, f in pairs(frames) do
-		if f.db.enabled then
-			f:Show()
-		end
-	end
-end
-
+--------
+-- Show/Hide
+--------
 function Fortress:HideAllObjects()
 	for _, frame in pairs(frames) do
 		frame:SetAlpha(0)
@@ -573,6 +565,9 @@ function Fortress:HideLinked(block)
 	end
 end
 
+--------
+-- Update
+--------
 function Fortress:UpdateAllObjects()
 	for name, obj in pairs(dataObjects) do
 		if FT_PROFILE_DEBUG then
@@ -583,6 +578,7 @@ function Fortress:UpdateAllObjects()
 end
 
 function Fortress:UpdateObject(name, obj)
+	if not db.pluginSettings[name].enabled then return end
 	local frame = frames[name]
 	if frame then
 		obj = obj or dataObjects[name]
@@ -689,19 +685,11 @@ function Fortress:UpdateBackdrop(name)
 	frame:SetBackdrop(backdrop)
 end
 
-function Fortress:ToggleLaunchers()
-	local ignore = db.ignoreLaunchers
-	if ignore then
-		for name, obj in pairs(dataObjects) do
-			if obj.type == "launcher" then
-				self:DisableDataObject(name)
-			end
-		end
-	else
-		for name, obj in broker:DataObjectIterator() do
-			if obj.type == "launcher" then
-				self:LibDataBroker_DataObjectCreated(nil, name, obj)
-			end
+function Fortress:ToggleLaunchers()	
+	local func = db.ignoreLaunchers and self.DisableDataObject or self.EnableDataObject
+	for name, obj in pairs(dataObjects) do
+		if obj.type == "launcher" then
+			func(self, name)
 		end
 	end
 end

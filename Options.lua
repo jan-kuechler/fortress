@@ -132,7 +132,7 @@ end
 
 local function PluginDisabled(info)
 	local name = GetAppName(info.appName)
-	return not GetPluginSetting(name, "enabled")
+	return not db.pluginSettings[name].enabled -- enabled is always handled per plugin
 end
 
 --[[ options table ]]--
@@ -223,13 +223,7 @@ local options = {
 			order = 2,
 			get  = MasterGet,
 			set  = MasterSet,
-			args = {
-				--[[heading = { -- outdated
-					name = L["description_text"],
-					type = "description",
-					order = 0,
-				},]]
-			},
+			args = {},
 		},
 	},
 }
@@ -459,6 +453,7 @@ local pluginOptionsGroup = {
 		name = L["Settings"],
 		desc = L["Individual plugin settings."],
 		args = pluginOptions,
+		disabled = PluginDisabled,
 		order = 1,
 	},
 	masterSettings = {
