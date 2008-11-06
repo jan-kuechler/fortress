@@ -467,7 +467,7 @@ function Fortress:EnableDataObject(name)
 	db.pluginSettings[name].enabled = true
 	
 	if obj.secureTemplates then
-		db.blockDB[name].appendString = obj.secureTemplates
+		db.blockDB[name].appendString = obj.secureTemplate
 	end
 	
 	-- create frame for object
