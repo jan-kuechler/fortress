@@ -368,8 +368,6 @@ function Fortress:OnInitialize()
 			pluginUseMaster = {
 				['*'] = {}
 			},
-			frameLinks = {			
-			},
 			enabled = true,
 			hideAllOnMouseOut = false,
 			ignoreLaunchers = false,
