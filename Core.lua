@@ -14,13 +14,6 @@ local strTable    = {}
 local backdrops   = {}
 local insets      = {}
 
--- Change this line to
--- local TABLET20_FIX = false
--- to disable the fix for Tablet-2.0 tooltips,
--- that may prevent the tooltip to be shown for
--- certain plugins.
-local TABLET20_FIX = false
-
 --------
 -- utility functions
 --------
@@ -109,8 +102,6 @@ local function BlockIsLinked(block, other)
 	end
 end
 
-_G.FT_BIL = BlockIsLinked
-
 --------
 -- Tooltip handling
 --------
@@ -143,16 +134,7 @@ local function Block_OnEnter(self)
 	local obj  = self.obj
 	local name = self.name
 		
-	--if db.hideAllOnMouseOut then
-	--	Fortress:ShowAllObjects()
-	--else
-	--	self:SetAlpha(GetPluginSetting(name, "blockAlpha"))
-	--end
 	ShowBlocks(self, name)
-	
-	if TABLET20_FIX and self:GetScript("OnEnter") ~= Block_OnEnter then
-		self:SetScript("OnEnter", Block_OnEnter)
-	end
 	
 	if GetPluginSetting(name, "disableTooltip") then
 		return
@@ -409,20 +391,14 @@ function Fortress:OnDisable()
 end
 
 function Fortress:Refresh()
-	--FT_PROFILE_DEBUG = true
 	db = self.db.profile
 	self:UpdateOptionsDbRef()	
 	Debug("DB refs updated")
 	
 	ClearLegoData()
-	
-	--self:LoadFramePositions()
-	--self:LoadFrameLinks()
-		
+			
 	self:UpdateAllObjects()
 	Debug("Objects updated")
-		
-	--FT_PROFILE_DEBUG = nil
 end
 
 --------
