@@ -214,7 +214,6 @@ local options = {
 			order = 2,
 			get  = MasterGet,
 			set  = MasterSet,
-			childGroups = "select",
 			args = {},
 		},
 	},
@@ -436,8 +435,7 @@ local pluginOptionsGroup = {
 		name = L["Settings"],
 		desc = L["Individual plugin settings."],
 		args = pluginOptions,
-		disabled = PluginDisabled,
-		childGroups = "select",
+		disabled = PluginDisabled,,
 		order = 1,
 	},
 	masterSettings = {
