@@ -147,7 +147,7 @@ local function Block_OnEnter(self)
 	local name = self.name
 		
 	ShowBlocks(self, name)
-		
+	
 	if GetPluginSetting(name, "disableTooltip") then
 		return
 	end
@@ -356,8 +356,6 @@ function Fortress:OnInitialize()
 			pluginUseMaster = {
 				['*'] = {}
 			},
-			frameLinks = {			
-			},
 			enabled = true,
 			hideAllOnMouseOut = false,
 			ignoreLaunchers = false,
@@ -477,7 +475,7 @@ function Fortress:EnableDataObject(name)
 	db.pluginSettings[name].enabled = true
 	
 	if obj.secureTemplates then
-		db.blockDB[name].appendString = obj.secureTemplates
+		db.blockDB[name].appendString = obj.secureTemplate
 	end
 	
 	-- create frame for object
