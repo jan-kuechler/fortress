@@ -11,24 +11,16 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Fortress")
 local db
 local appName = "Fortress"
 
+local Debug = Fortress.Debug
+local GetPluginSetting = Fortress.GetPluginSetting
+
 --------
 -- utility functions
 --------
-local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", ...), 0, 1, 0)
-end
-
-local function GetPluginSetting(pluginName, setting)
-	if db.pluginUseMaster[pluginName][setting] then
-		return db.masterSettings[setting]
-	else
-		return db.pluginSettings[pluginName][setting]
-	end
-end
-
 local function GetAppName(name)
 	return string.gsub(name, "Fortress", "")
 end
+
 --------
 -- db getter/setter
 --------
@@ -222,6 +214,7 @@ local options = {
 			order = 2,
 			get  = MasterGet,
 			set  = MasterSet,
+			childGroups = "select",
 			args = {},
 		},
 	},
@@ -229,6 +222,7 @@ local options = {
 
 local pluginSettings = {
 	{
+		name = "General Settings",
 		{
 			key = "showText",
 			name = L["Show Text"],
@@ -244,54 +238,11 @@ local pluginSettings = {
 			name = L["Show Icon"],
 			desc = L["Show the plugin's icon."],
 		},
-		--{
-		--	key = "showBorder",
-		--	name = L["Show Border"],
-		--	desc = L["Show the plugin's border."],
-		--},
-	},
-	{
-		{
-			key = "fontSize",
-			name = L["Font Size"],
-			desc = L["The text's font size."],
-			min  = 5,
-			max  = 20,
-			step = 1,
-		},
-		{
-			key = "blockScale",
-			name = L["Block Scale"],
-			desc = L["Adjusts the plugin's size."],
-			min  = .1,
-			max  = 2,
-			step = .01,
-			isPercent = true,
-		},
-		{
-			key = "blockHeight",
-			name = L["Block Height"],
-			desc = L["Adjusts the plugin's height."],
-			min  = 20,
-			max  = 50,
-			step =  1,
-		},
-		{
-			key = "blockAlpha",
-			name = L["Block Alpha"],
-			desc = L["Adjusts the plugin's alpha value."],
-			min  = 0,
-			max  = 1,
-			step = .1,
-			isPercent = true,
-		},
 		{
 			key = "blockLocked",
 			name = L["Locked"],
 			desc = "",
 		},
-	},
-	{
 		{
 			key = "hideInCombat",
 			name = L["Hide in combat"],
@@ -313,7 +264,26 @@ local pluginSettings = {
 			desc = L["Do not show this plugin's tooltip."],
 		},
 	},
+	----------------------
 	{
+		name = "Block Customization",
+		{
+			key = "blockScale",
+			name = L["Block Scale"],
+			desc = L["Adjusts the plugin's size."],
+			min  = .1,
+			max  = 2,
+			step = .01,
+			isPercent = true,
+		},
+		{
+			key = "blockHeight",
+			name = L["Block Height"],
+			desc = L["Adjusts the plugin's height."],
+			min  = 20,
+			max  = 50,
+			step =  1,
+		},	
 		{
 			key = "fixedWidth",
 			name = L["Fixed Width"],
@@ -336,17 +306,21 @@ local pluginSettings = {
 		},
 	},
 	{
+		-- Font Settings
 		{
-			key = "borderColor",
-			name = L["Border Color"],
-			desc = L["The plugins border color."],
-			hasAlpha = true,
+			key = "font",
+			name = L["Font"],
+			desc = L["The font for the plugin text."],
+			dialogControl = "LSM30_Font",
+			values = AceGUIWidgetLSMlists.font,
 		},
 		{
-			key = "frameColor",
-			name = L["Frame Color"],
-			desc = L["The plugins main color."],
-			hasAlpha = true,
+			key = "fontSize",
+			name = L["Font Size"],
+			desc = L["The text's font size."],
+			min  = 5,
+			max  = 20,
+			step = 1,
 		},
 		{
 			key = "textColor",
@@ -365,13 +339,7 @@ local pluginSettings = {
 		},
 	},
 	{
-		{
-			key = "font",
-			name = L["Font"],
-			desc = L["The font for the plugin text."],
-			dialogControl = "LSM30_Font",
-			values = AceGUIWidgetLSMlists.font,
-		},
+		-- Background Settings
 		{
 			key = "background",
 			name = L["Background"],
@@ -380,12 +348,40 @@ local pluginSettings = {
 			values = AceGUIWidgetLSMlists.background,
 		},
 		{
+			key = "blockAlpha",
+			name = L["Block Alpha"],
+			desc = L["Adjusts the plugin's alpha value."],
+			min  = 0,
+			max  = 1,
+			step = .1,
+			isPercent = true,
+		},
+		{
+			key = "frameColor",
+			name = L["Frame Color"],
+			desc = L["The plugins main color."],
+			hasAlpha = true,
+		},
+	},
+	{
+		-- Border Settings
+		{
 			key = "border",
 			name = L["Border"],
 			desc = L["The border texture for the plugin. Use 'None' to show no border."],
 			dialogControl = "LSM30_Border",		
 			values = AceGUIWidgetLSMlists.border,
 		},
+		{
+			key = "borderColor",
+			name = L["Border Color"],
+			desc = L["The plugins border color."],
+			hasAlpha = true,
+		},
+	},
+	----------------------
+	{
+		name = "Advanced Settings",
 		{
 			key = "bgTiled",
 			name = L["Tiled background"],
@@ -406,22 +402,6 @@ local pluginSettings = {
 				return not db.masterSettings.bgTiled
 			end,			
 		},
-		--{
-		--	key = "edgeSize",
-		--	name = L["Edge size"],
-		--	desc = L["The size for the edges."],
-		--	min  = 1,
-		--	max  = 25,
-		--	step = 1,
-		--},
-		--{
-		--	key = "insets",
-		--	name = L["Insets"],
-		--	desc = L["The border insets."],
-		--	min  = 0,
-		--	max  = 10,
-		--	step = 1,
-		--},
 	},
 }
 
@@ -457,6 +437,7 @@ local pluginOptionsGroup = {
 		desc = L["Individual plugin settings."],
 		args = pluginOptions,
 		disabled = PluginDisabled,
+		childGroups = "select",
 		order = 1,
 	},
 	masterSettings = {
@@ -487,13 +468,15 @@ local function CopyTable(tab, deep)
 	return ret
 end
 
+local ignoreFields = { key = true, masterDisabled = true }
+
 local function CreatePluginOptions()
 	local optType = Fortress.defaults.profile.masterSettings
 
 	for i, group in ipairs(pluginSettings) do
 		local groupName = "group" .. i
 		local groupTable = {
-			name   = group.name or "",
+			name   = "",
 			inline = true,
 			type   = "group",
 			order  = i,
@@ -501,46 +484,41 @@ local function CreatePluginOptions()
 		}
 		local tmp
 	
-		--local optionsGroup = {
-		--	name   = group.name or "",
-		--	inline = true,
-		--	type   = "group",
-		--	order  = i,
-		--	args   = {},
-		--}
-		--optionsArgs = optionsGroup.args
-		
 		tmp = CopyTable(groupTable, true)
 		pluginOptions[groupName] = tmp
 		local optionsArgs = tmp.args
 		
-		--local masterGroup = {
-		--	name   = group.name or "",
-		--	inline = true,
-		--	type   = "group",
-		--	order  = i,
-		--	args   = {},   
-		--}
-		--local masterArgs = masterGroup.args
 		tmp = CopyTable(groupTable, true)
 		options.args.masterPluginSettings.args[groupName] = tmp
 		local masterArgs = tmp.args
 		
-		--local useMasterGroup = {
-		--	name   = group.name or "",
-		--	inline = true,
-		--	type   = "group",
-		--	order  = i,
-		--	args   = {},   
-		--}
-		--useMasterArgs = useMasterGroup.args
 		tmp = groupTable
+		tmp.name = ""
+		tmp.inline = true
 		pluginUseMasterOptions[groupName] = tmp
 		local useMasterArgs = tmp.args
+		
+		if group.name then
+			local heading = {
+				type = "header",
+				name = group.name,
+				desc = "",
+				order = 0,
+			}
+			optionsArgs.heading = heading
+			masterArgs.heading = heading
+			useMasterArgs.heading = heading
+		end
 
 		for ii, setting in ipairs(group) do
 			local key = setting.key
-			local t   = typeToType[type(optType[key])]
+			local t
+			if key then
+				t = typeToType[type(optType[key])]
+			else
+				key = "entry"..ii
+				t = setting.type
+			end
 			Debug("Type for", key, "is", t or "nil")
 			
 			local get, set, mget, mset
@@ -560,22 +538,16 @@ local function CreatePluginOptions()
 			set = setting.set or set
 			
 			local opt = {
-				type = t,
-				name = setting.name,
-				desc = setting.desc,
-				get  = get,
-				set  = set,
-				disabled = setting.disabled,
-				hidden = setting.hidden,
-				hasAlpha = setting.hasAlpha,
-				min  = setting.min,
-				max  = setting.max,
-				step = setting.step,
-				isPercent = setting.isPercent,
+				type  = t,
+				get   = get,
+				set   = set,
 				order = ii,
-				dialogControl = setting.dialogControl,
-				values        = setting.values,
 			}
+			for k, v in pairs(setting) do	
+				if not ignoreFields[k] then
+					opt[k] = v
+				end
+			end
 			optionsArgs[key] = opt
 			
 			local masterOpt = CopyTable(opt)
@@ -583,43 +555,7 @@ local function CreatePluginOptions()
 			masterOpt.set = mset
 			masterOpt.disabled = setting.masterDisabled
 			masterArgs[key] = masterOpt			
-			
-			--[[optionsArgs[key] = {
-				type = t,
-				name = setting.name,
-				desc = setting.desc,
-				get  = get,
-				set  = set,
-				disabled = setting.disabled,
-				hidden = setting.hidden,
-				hasAlpha = setting.hasAlpha,
-				min  = setting.min,
-				max  = setting.max,
-				step = setting.step,
-				isPercent = setting.isPercent,
-				order = ii,
-				dialogControl = setting.dialogControl,
-				values        = setting.values,
-			}]]
-			
-			--[[masterArgs[key] = {
-				type = t,
-				name = setting.name,
-				desc = setting.desc,
-				get  = mget,
-				set  = mset,
-				disabled = setting.masterDisabled,
-				hidden = setting.hidden,
-				hasAlpha = setting.hasAlpha,
-				min  = setting.min,
-				max  = setting.max,
-				step = setting.step,
-				isPercent = setting.isPercent,
-				order = ii,
-				dialogControl = setting.dialogControl,
-				values        = setting.values,
-			}]]
-			
+						
 			useMasterArgs[key] = {
 				type = "toggle",
 				name = setting.name,

@@ -20,6 +20,7 @@ local insets      = {}
 local function Debug(...)
 --	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
 end
+Fortress.Debug = Debug
 
 local function GetPluginSetting(pluginName, setting)
 	if db.pluginUseMaster[pluginName][setting] then
@@ -28,6 +29,7 @@ local function GetPluginSetting(pluginName, setting)
 		return db.pluginSettings[pluginName][setting]
 	end
 end
+Fortress.GetPluginSetting = GetPluginSetting
 
 local function GetAnchors(frame)
 	local x, y = frame:GetCenter()
