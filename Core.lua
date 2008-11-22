@@ -590,7 +590,7 @@ function Fortress:UpdateObject(name, obj)
 			func(frame, obj[key], name) 
 		end	
 		
-		if not MouseIsOver(frame) and (db.hideAllOnMouseOut or GetPluginSetting(name, "hideOnMouseOut")) then
+		if not MouseIsOver(frame) and (db.hideAllOnMouseOut or db.showLinked or GetPluginSetting(name, "hideOnMouseOut")) then
 			frame:SetAlpha(0)
 		else
 			frame:SetAlpha(GetPluginSetting(name, "blockAlpha"))
