@@ -221,7 +221,7 @@ local options = {
 
 local pluginSettings = {
 	{
-		name = "General Settings",
+		name = L["General Settings"],
 		{
 			key = "showText",
 			name = L["Show Text"],
@@ -265,7 +265,7 @@ local pluginSettings = {
 	},
 	----------------------
 	{
-		name = "Block Customization",
+		name = L["Block Customization"],
 		{
 			key = "blockScale",
 			name = L["Block Scale"],
@@ -304,8 +304,7 @@ local pluginSettings = {
 			end,
 		},
 	},
-	{
-		-- Font Settings
+	{	-- Font Settings
 		{
 			key = "font",
 			name = L["Font"],
@@ -337,8 +336,7 @@ local pluginSettings = {
 			desc = L["The suffix color."],
 		},
 	},
-	{
-		-- Background Settings
+	{	-- Background Settings
 		{
 			key = "background",
 			name = L["Background"],
@@ -362,8 +360,7 @@ local pluginSettings = {
 			hasAlpha = true,
 		},
 	},
-	{
-		-- Border Settings
+	{	-- Border Settings
 		{
 			key = "border",
 			name = L["Border"],
@@ -380,7 +377,7 @@ local pluginSettings = {
 	},
 	----------------------
 	{
-		name = "Advanced Settings",
+		name = L["Advanced Settings"],
 		{
 			key = "bgTiled",
 			name = L["Tiled background"],
@@ -400,6 +397,11 @@ local pluginSettings = {
 			masterDisabled = function(info)
 				return not db.masterSettings.bgTiled
 			end,			
+		},
+		{
+			key = "hideTooltipOnClick",
+			name = L["Hide tooltip on click"],
+			desc = L["Hide the plugin's tooltip when you click the block."],
 		},
 	},
 }
@@ -576,7 +578,7 @@ local function ChatCmd(input)
 		if input:trim() == "help" then
 			input = ""
 		end
-		AceCfgCmd.HandleCommand(self, "fortress", appName, input)
+		AceCfgCmd.HandleCommand(Fortress, "fortress", appName, input)
 	end
 end
 

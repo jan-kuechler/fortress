@@ -76,6 +76,12 @@ L["Block Height"] = "Blockh\195\182he"
 L["Adjusts the plugin's height."] = "\195\132ndert die H\195\182he des Plugins."
 L["Show Linked"] = "Zusammenh\195\164ngende anzeigen"
 L["Show all linked blocks when the mouse is over one, hide them otherwise."] = "Alle zusammenh\195\164ngende Plugins anzeigen, wenn die Maus \195\188ber einem ist, ansonsten alle verstecken."
+L["Hide tooltip on click"] = "Tooltip beim Klick verstecken"
+L["Hide the plugin's tooltip when you click the block."] = "Den Tooltip des Plugins verstecken, wenn es angeklickt wird."
+L["General Settings"] = "Allgemeine Einstellungen"
+L["Block Customization"] = "Block Einstellungen"
+L["Advanced Settings"] = "Erweiterte Einstellungen"
+
 
 --[[
 

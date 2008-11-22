@@ -200,12 +200,14 @@ local function Block_OnClick(self, ...)
 	local obj  = self.obj
 	local name = self.name
 	
-	if obj.OnLeave then
-		obj.OnLeave(self)
-	elseif obj.tooltiptext or obj.OnTooltipShow then
-		GT_OnLeave(GameTooltip)
-	elseif obj.tooltip then
-		obj.tooltip:Hide()
+	if GetPluginSetting(name, "hideTooltipOnClick") then
+		if obj.OnLeave then
+			obj.OnLeave(self)
+		elseif obj.tooltiptext or obj.OnTooltipShow then
+			GT_OnLeave(GameTooltip)
+		elseif obj.tooltip then
+			obj.tooltip:Hide()
+		end
 	end
 	
 	if obj.OnClick then
@@ -345,6 +347,8 @@ function Fortress:OnInitialize()
 				disableTooltip      = false,
 				hideTooltipInCombat = false,
 				hideOnMouseOut      = false,	
+				
+				hideTooltipOnClick = false,
 				
 				font       = "Friz Quadrata TT",
 				background = "Blizzard Tooltip",
