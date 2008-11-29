@@ -493,8 +493,6 @@ local function CreatePluginOptions()
 		local masterArgs = tmp.args
 		
 		tmp = groupTable
-		tmp.name = ""
-		tmp.inline = true
 		pluginUseMasterOptions[groupName] = tmp
 		local useMasterArgs = tmp.args
 		
