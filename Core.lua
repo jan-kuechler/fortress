@@ -156,7 +156,6 @@ local function Block_OnEnter(self)
 			
 	if (not InCombatLockdown()) or (not GetPluginSetting(name, "hideTooltipInCombat")) then	
 		if obj.tooltip then
-			Debug("using obj.tooltip")
 			PrepareTooltip(obj.tooltip, self)
 			if obj.tooltiptext then
 				obj.tooltip:SetText(obj.tooltiptext)
@@ -169,6 +168,7 @@ local function Block_OnEnter(self)
 			GameTooltip:Show()
 		
 		elseif obj.tooltiptext then
+			Debug("Deprecated .tooltiptext found")
 			PrepareTooltip(GameTooltip, self)
 			GameTooltip:SetText(obj.tooltiptext)
 			GameTooltip:Show()		
@@ -288,6 +288,15 @@ local uniqueUpdaters = {
 			frame:HideIcon()
 		end
 	end,
+	
+	-- Support texcoord, though it's not in the spec yet.
+	texcoord = function(frame, value, name)
+		local object = dataObjects[name]
+		if object.texcoord then
+			frame.icon:SetTexCoord(unpack(object.texcoord))
+		end
+	end,
+
 	
 	-- tooltiptext is no longer in the data spec, but 
 	-- I'll continue to support it, as some plugins seem to use it
@@ -576,9 +585,6 @@ end
 --------
 function Fortress:UpdateAllObjects()
 	for name, obj in pairs(dataObjects) do
-		if FT_PROFILE_DEBUG then
-			Debug("Updating", name)
-		end
 		self:UpdateObject(name, obj)
 	end
 end
