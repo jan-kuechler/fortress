@@ -630,7 +630,8 @@ function Fortress:AddObjectOptions(name)
 	t.get  = PluginGet
 	t.set  = PluginSet
 	AceCfgReg:RegisterOptionsTable("Fortress"..name, t)
-	AceCfgDlg:AddToBlizOptions("Fortress"..name, name, "Fortress")
+	local panel = AceCfgDlg:AddToBlizOptions("Fortress"..name, "- "..name, "Fortress")
+	panel.obj:SetTitle(name)
 	
 	SortSubCategories("Fortress")
 end
