@@ -437,7 +437,9 @@ local pluginOptionsGroup = {
 		name = L["Settings"],
 		desc = L["Individual plugin settings."],
 		args = pluginOptions,
-		disabled = PluginDisabled,
+		-- Don't disable this, otherwise there's no way to reenable it...
+		-- Never!
+		-- disabled = PluginDisabled,
 		order = 1,
 	},
 	masterSettings = {
