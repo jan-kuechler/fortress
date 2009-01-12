@@ -437,14 +437,13 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	
 	local t = obj.type
 	
-	-- Print warnings in alpha versions.
-	-- Maybe some experienced users can get the developers of plugins to follow the spec.
-	--@alpha@
+-- Only warn in alpha versions
+--@alpha@
 	if t == nil then
 		print("Fortress: The data object", name, "has no type attribute set. Please report this to the author of the plugin.")
 	end
-	--@end-alpha@
-	
+--@end-alpha@
+
 	-- support data objects without type set, allthough that's not correct
 	if t and (t ~= "data source" and t ~= "launcher") then
 		return
