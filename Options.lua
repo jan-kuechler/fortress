@@ -13,6 +13,7 @@ local appName = "Fortress"
 
 local Debug = Fortress.Debug
 local GetPluginSetting = Fortress.GetPluginSetting
+local IsLauncher = Fortress.IsLauncher
 
 --------
 -- utility functions
@@ -303,6 +304,14 @@ local pluginSettings = {
 				return not db.masterSettings.fixedWidth
 			end,
 		},
+		{
+			key = "iconSize",
+			name = L["Icon Size"],
+			desc = L["The change of the plugin's icon."],
+			min  = 5,
+			max  = 50,
+			step = 1,
+		},
 	},
 	{	-- Font Settings
 		{
@@ -425,7 +434,7 @@ local pluginOptions = {
 		end, 
 		disabled = function(info)
 			local name = GetAppName(info.appName)
-			return db.ignoreLaunchers and Fortress:IsLauncher(name)
+			return db.ignoreLaunchers and IsLauncher(name)
 		end,
 		order = 0,
 	},
@@ -437,7 +446,6 @@ local pluginOptionsGroup = {
 		name = L["Settings"],
 		desc = L["Individual plugin settings."],
 		args = pluginOptions,
-		disabled = PluginDisabled,
 		order = 1,
 	},
 	masterSettings = {

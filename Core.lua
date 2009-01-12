@@ -31,6 +31,11 @@ local function GetPluginSetting(pluginName, setting)
 end
 Fortress.GetPluginSetting = GetPluginSetting
 
+local function IsLauncher(name)
+	return dataObjects[name] and dataObjects[name].type == "launcher"
+end
+Fortress.IsLauncher = IsLauncher
+
 local function GetAnchors(frame)
 	local x, y = frame:GetCenter()
 	local leftRight
@@ -349,6 +354,8 @@ function Fortress:OnInitialize()
 				blockAlpha  = 1,
 				blockLocked = false,
 				
+				iconSize    = 16,
+				
 				fixedWidth = false,
 				blockWidth = 100,
 				
@@ -636,6 +643,7 @@ function Fortress:UpdateFontAndSize(name)
 	local fontSize = GetPluginSetting(name, "fontSize")
 	local scale    = GetPluginSetting(name, "blockScale")
 	local height   = GetPluginSetting(name, "blockHeight")
+	local iconSize = GetPluginSetting(name, "iconSize")
 	
 	local font = media:Fetch(media.MediaType.FONT, fontName)
 	
@@ -653,6 +661,9 @@ function Fortress:UpdateFontAndSize(name)
 		db.blockDB[name].width = nil
 		frame:SetDB(db.blockDB[name]) -- update the width
 	end
+	
+	frame.icon:SetHeight(iconSize)
+	frame.icon:SetWidth(iconSize)
 	
 	frame:SetHeight(height)
 	frame.optionsTbl.height = height
@@ -701,10 +712,6 @@ function Fortress:UpdateBackdrop(name)
 	end
 	
 	frame:SetBackdrop(backdrop)
-end
-
-function Fortress:IsLauncher(name)
-	return dataObjects[name] and dataObjects[name].type == "launcher"
 end
 
 function Fortress:ToggleLaunchers()	
