@@ -282,6 +282,15 @@ local function TextUpdater(frame, value, name)
 	end
 end
 
+local function IconColorUpdater(frame, value, name)
+	local obj = dataObjects[name]
+	
+	local r, g, b = obj.r, obj.g, obj.b
+	if r and g and b then
+		frame.icon:SetVertexColor(r, g, b)
+	end
+end
+
 local uniqueUpdaters = {
 	text = TextUpdater,
 	
@@ -302,6 +311,12 @@ local uniqueUpdaters = {
 		end
 	end,
 
+	iconCoord = function(frame, value, name)
+		local obj = dataObjects[name]
+		if obj.iconCoord then
+			frame.icon:SetTexCoord(unpack(obj.iconCoord))
+		end
+	end,
 	
 	-- tooltiptext is no longer in the data spec, but 
 	-- I'll continue to support it, as some plugins seem to use it
@@ -312,12 +327,17 @@ local uniqueUpdaters = {
 			tt:SetText(object.tooltiptext)
 		end
 	end,
+	
+	iconR = IconColorUpdater,
 }
 
 local updaters = {
 	label  = TextUpdater,
 	value  = TextUpdater,
 	suffix = TextUpdater,	
+	
+	iconG  = IconColorUpdater,
+	iconB  = IconColorUpdater,
 }
 for k, v in pairs(uniqueUpdaters) do
 	updaters[k] = v
