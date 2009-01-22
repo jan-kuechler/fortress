@@ -70,8 +70,8 @@ L["Tiled background"] = "Gekachelter Hintergrund"
 L["Use tiled background."] = "Das Hintergrundbild kacheln."
 L["Tile size"] = "Kachelgr\195\182\195\159e"
 L["The size for the background tiles."] = "Die Gr\195\182\195\159e der Hintergrundkacheln."
---L["Edge size"] = true
---L["The size for the edges."] = true
+L["Edge size"] = "Rahmendicke"
+L["The size for the edges."] = "Die Dicke des Rahmens."
 L["Block Height"] = "Blockh\195\182he"
 L["Adjusts the plugin's height."] = "\195\132ndert die H\195\182he des Plugins."
 L["Show Linked"] = "Zusammenh\195\164ngende anzeigen"
@@ -81,7 +81,8 @@ L["Hide the plugin's tooltip when you click the block."] = "Den Tooltip des Plug
 L["General Settings"] = "Allgemeine Einstellungen"
 L["Block Customization"] = "Block Einstellungen"
 L["Advanced Settings"] = "Erweiterte Einstellungen"
-
+L["Icon Size"] = "Icon Gr\195\182\195\159e"
+L["The size of the plugin's icon."] = "Die Gr\195\182\195\159e des Icons."
 
 --[[
 

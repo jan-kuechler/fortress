@@ -307,7 +307,7 @@ local pluginSettings = {
 		{
 			key = "iconSize",
 			name = L["Icon Size"],
-			desc = L["The change of the plugin's icon."],
+			desc = L["The size of the plugin's icon."],
 			min  = 5,
 			max  = 50,
 			step = 1,
@@ -406,6 +406,14 @@ local pluginSettings = {
 			masterDisabled = function(info)
 				return not db.masterSettings.bgTiled
 			end,			
+		},
+		{
+			key = "edgeSize",
+			name = L["Edge size"],
+			desc = L["The size for the edges."],
+			min  = 1,
+			max  = 30,
+			step = 1,
 		},
 		{
 			key = "hideTooltipOnClick",

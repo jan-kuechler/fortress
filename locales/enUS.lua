@@ -80,3 +80,5 @@ L["Hide the plugin's tooltip when you click the block."] = true
 L["General Settings"] = true
 L["Block Customization"] = true
 L["Advanced Settings"] = true
+L["Icon Size"] = true
+L["The size of the plugin's icon."] = true
