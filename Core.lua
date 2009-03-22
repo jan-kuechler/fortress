@@ -15,12 +15,67 @@ local backdrops   = {}
 local insets      = {}
 
 --------
+-- LegoBlock hacks )-:
+--------
+local function ClearFortressRefs(tbl, newTab)
+	for frame in pairs(tbl) do
+		local name = frame:GetName()
+		if name and name:find("Fortress") then
+			tbl[frame] = newTab and {} or nil
+		end
+	end
+end
+
+-- used in Fortress:Refresh()
+local function ClearLegoData()
+	ClearFortressRefs(legos.frameLinks, true)
+	ClearFortressRefs(legos.stickiedFrames)
+end
+
+local function BlockIsLinkedTo(block, other)
+	local head1, head2 = block.headLB, other.headLB
+	
+	if not head1 and not head2 then
+		return false
+	elseif head1 == head2 then
+		return true
+	elseif head1 == other then
+		return true
+	elseif head2 == block then
+		return true
+	else
+		return false
+	end
+end
+
+local function BlockIsLinked(block)
+	-- there is now simpler way to detect a linked-to-anything block
+	-- as the head block of a linked group neither has .headLB 
+	-- nor is it listed in any LegoBlock structure
+	for name, frame in pairs(frames) do
+		if BlockIsLinkedTo(block, frame) then
+			return true
+		end
+	end
+	return false
+end
+
+local function ResizeBlock(block)
+	block:SetText(block.text:GetText())
+end
+
+--------
 -- utility functions
 --------
 local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
+	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
 end
 Fortress.Debug = Debug
+
+local function Deprecated(name, func)
+	Debug(name, "uses a deprecated function:", func);
+end
+Fortress.Deprecated = Deprecated
 
 local function GetPluginSetting(pluginName, setting)
 	if db.pluginUseMaster[pluginName][setting] then
@@ -66,11 +121,11 @@ local function ShowBlocks(block, name)
 end
 
 local function HideBlocks(block, name)
-	if db.hideAllOnMouseOut then
+	if db.hideAllOnMouseOut  then
 		Fortress:HideAllObjects()
-	elseif db.showLinked then
+	elseif db.showLinked and BlockIsLinked(block) then
 		Fortress:HideLinked(block)
-	elseif GetPluginSetting(name, "hideOnMouseOut") then
+	elseif GetPluginSetting(name, "hideOnMouseOut") and not GetPluginSetting(name, "forceVisible") then
 		block:SetAlpha(0)
 	end
 end
@@ -84,40 +139,6 @@ do
 		db.anchor  = "TOP"
 		
 		newFrameOffset = newFrameOffset - 2*frame:GetHeight()	
-	end
-end
-
---------
--- LegoBlock hacks )-:
---------
-local function ClearFortressRefs(tbl, newTab)
-	for frame in pairs(tbl) do
-		local name = frame:GetName()
-		if name and name:find("Fortress") then
-			tbl[frame] = newTab and {} or nil
-		end
-	end
-end
-
--- used in Fortress:Refresh()
-local function ClearLegoData()
-	ClearFortressRefs(legos.frameLinks, true)
-	ClearFortressRefs(legos.stickiedFrames)
-end
-
-local function BlockIsLinked(block, other)
-	local head1, head2 = block.headLB, other.headLB
-	
-	if not head1 and not head2 then
-		return false
-	elseif head1 == head2 then
-		return true
-	elseif head1 == other then
-		return true
-	elseif head2 == block then
-		return true
-	else
-		return false
 	end
 end
 
@@ -173,7 +194,6 @@ local function Block_OnEnter(self)
 			GameTooltip:Show()
 		
 		elseif obj.tooltiptext then
-			Debug("Deprecated .tooltiptext found")
 			PrepareTooltip(GameTooltip, self)
 			GameTooltip:SetText(obj.tooltiptext)
 			GameTooltip:Show()		
@@ -285,7 +305,7 @@ end
 local function IconColorUpdater(frame, value, name)
 	local obj = dataObjects[name]
 	
-	local r, g, b = obj.r, obj.g, obj.b
+	local r, g, b = obj.iconR, obj.iconG, obj.iconB
 	if r and g and b then
 		frame.icon:SetVertexColor(r, g, b)
 	end
@@ -311,16 +331,17 @@ local uniqueUpdaters = {
 		end
 	end,
 
-	iconCoord = function(frame, value, name)
+	iconCoords = function(frame, value, name)
 		local obj = dataObjects[name]
-		if obj.iconCoord then
-			frame.icon:SetTexCoord(unpack(obj.iconCoord))
+		if obj.iconCoords then
+			frame.icon:SetTexCoord(unpack(obj.iconCoords))
 		end
 	end,
 	
 	-- tooltiptext is no longer in the data spec, but 
 	-- I'll continue to support it, as some plugins seem to use it
 	tooltiptext = function(frame, value, name)
+		Deprecated(name, ".tooltiptext")
 		local object = dataObjects[name]
 		local tt = object.tooltip or GameTooltip
 		if tt:GetOwner() == frame then
@@ -385,6 +406,19 @@ function Fortress:OnInitialize()
 				hideOnMouseOut      = false,	
 				
 				hideTooltipOnClick = false,
+				forceVisible       = false,
+				
+				iconAlign = "LEFT",
+				iconAlignTo = "LEFT",
+				iconRelText = false,
+				iconAlignXOffs = 8,
+				iconAlignYOffs = 0,
+				
+				textAlign = "LEFT",
+				textAlignTo = "RIGHT",
+				textRelIcon = true,
+				textAlignXOffs = 0,
+				textAlignYOffs = 0,
 				
 				font       = "Friz Quadrata TT",
 				background = "Blizzard Tooltip",
@@ -398,10 +432,11 @@ function Fortress:OnInitialize()
 			pluginUseMaster = {
 				['*'] = {}
 			},
-			enabled = true,
+			enabled           = true,
 			hideAllOnMouseOut = false,
-			ignoreLaunchers = false,
-			showLinked = false,
+			ignoreLaunchers   = false,
+			showLinked        = false,
+			enableNewPlugins  = true,
 		},
 	}
 	local defaults = self.defaults
@@ -454,13 +489,13 @@ end
 --------
 function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	Debug("Dataobject Registered:", name)
-	
 	local t = obj.type
 	
 -- Only warn in alpha versions
 --@alpha@
 	if t == nil then
-		print("Fortress: The data object", name, "has no type attribute set. Please report this to the author of the plugin.")
+		--print("Fortress: The data object", name, "has no type attribute set. Please report this to the author of the plugin.")
+		Deprecated(name, "type attribute is nil")
 	end
 --@end-alpha@
 
@@ -469,7 +504,7 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 		return
 	end
 
-	self:CreateDataObject(name, obj)
+	self:CreateDataObject(name, obj, db.enableNewPlugins)
 end
 
 function Fortress:AttributeChanged(event, name, key, value)
@@ -505,12 +540,16 @@ end
 --------
 -- Object handling 
 --------
-function Fortress:CreateDataObject(name, obj)
+function Fortress:CreateDataObject(name, obj, enable)
 	if dataObjects[name] then return end
+	
+	if enable == nil then
+		enable = true
+	end
 	
 	dataObjects[name] = obj
 	self:AddObjectOptions(name)
-	if db.pluginSettings[name].enabled then
+	if enable and db.pluginSettings[name].enabled then
 		self:EnableDataObject(name)
 	end
 end
@@ -567,8 +606,12 @@ end
 -- Show/Hide
 --------
 function Fortress:HideAllObjects()
-	for _, frame in pairs(frames) do
-		frame:SetAlpha(0)
+	for name, frame in pairs(frames) do
+		if (db.showLinked and BlockIsLinked(frame) or true) and 
+		   (not GetPluginSetting(name, "forceVisible")) 
+		   then
+			frame:SetAlpha(0)
+		end
 	end
 end
 
@@ -583,7 +626,7 @@ local linkedBlocks = {}
 function Fortress:ShowLinked(block, force)
 	local i = 1
 	for name, frame in pairs(frames) do
-		if frame == block or BlockIsLinked(block, frame) then
+		if frame == block or BlockIsLinkedTo(block, frame) then
 			local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
 			frame:SetAlpha(alpha)
 			linkedBlocks[i] = frame
@@ -600,12 +643,14 @@ end
 function Fortress:HideLinked(block)
 	if #linkedBlocks then
 		for i, frame in ipairs(linkedBlocks) do
-			frame:SetAlpha(0)
+			if not GetPluginSetting(frame.name, "forceVisible") then
+				frame:SetAlpha(0)
+			end
 			linkedBlocks[i] = nil
 		end
 	else
 		for name, frame in pairs(frames) do
-			if frame == block or BlockIsLinked(block, frame) then
+			if (frame == block or BlockIsLinkedTo(block, frame)) and not GetPluginSetting(name, "forceVisible") then
 				frame:SetAlpha(0)
 			end		
 		end
@@ -630,7 +675,10 @@ function Fortress:UpdateObject(name, obj)
 			func(frame, obj[key], name) 
 		end	
 		
-		if not MouseIsOver(frame) and (db.hideAllOnMouseOut or db.showLinked or GetPluginSetting(name, "hideOnMouseOut")) then
+		if not MouseIsOver(frame)
+		   and (db.hideAllOnMouseOut or (db.showLinked and BlockIsLinked(frame)) or GetPluginSetting(name, "hideOnMouseOut"))
+		   and not GetPluginSetting(name, "forceVisible") 
+		   then
 			frame:SetAlpha(0)
 		else
 			frame:SetAlpha(GetPluginSetting(name, "blockAlpha"))
@@ -640,6 +688,7 @@ function Fortress:UpdateObject(name, obj)
 
 		self:UpdateBackdrop(name)
 		self:UpdateColor(name)
+		self:UpdateAlignment(name)
 		self:UpdateFontAndSize(name)
 	end
 end
@@ -678,7 +727,7 @@ function Fortress:UpdateFontAndSize(name)
 	else
 		db.blockDB[name].noResize =  false
 		db.blockDB[name].width = nil
-		frame:SetDB(db.blockDB[name]) -- update the width
+		ResizeBlock(frame)
 	end
 	
 	frame.icon:SetHeight(iconSize)
@@ -690,6 +739,33 @@ end
 
 function Fortress:UpdateAlignment(name)
 	local frame = frames[name]
+	
+	local iconAlign      = GetPluginSetting(name, "iconAlign")
+	local iconAlignTo    = GetPluginSetting(name, "iconAlignTo")
+	local iconRelText    = GetPluginSetting(name, "iconRelText")
+	local iconAlignXOffs = GetPluginSetting(name, "iconAlignXOffs")
+	local iconAlignYOffs = GetPluginSetting(name, "iconAlignYOffs")
+	local textAlign      = GetPluginSetting(name, "textAlign")
+	local textAlignTo    = GetPluginSetting(name, "textAlignTo")
+	local textRelIcon    = GetPluginSetting(name, "textRelIcon")
+	local textAlignXOffs = GetPluginSetting(name, "textAlignXOffs")
+	local textAlignYOffs = GetPluginSetting(name, "textAlignYOffs")
+	
+	local iconRelFrame = frame
+	local textRelFrame = frame
+	
+	if iconRelText then
+		iconRelFrame = frame.text
+	elseif textRelIcon then
+		textRelFrame = frame.icon
+	end
+	
+	frame.icon:ClearAllPoints()
+	frame.text:ClearAllPoints()
+	frame.icon:SetPoint(iconAlign, iconRelFrame, iconAlignTo, iconAlignXOffs, iconAlignYOffs)
+	frame.text:SetPoint(textAlign, textRelFrame, textAlignTo, textAlignXOffs, textAlignYOffs)
+	
+	ResizeBlock(frame)
 end
 
 local insets_default = {left = 0, right = 0, top = 0, bottom = 0}

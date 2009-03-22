@@ -206,6 +206,12 @@ local options = {
 					end,
 					order = 5,
 				},
+				enableNewPlugins = {
+					name = L["Enable new plugins"],
+					desc = L["Enable plugins by default, when they are loaded the first time."],
+					type = "toggle",
+					order = 6,
+				},
 			},
 		},
 		masterPluginSettings = {
@@ -218,6 +224,16 @@ local options = {
 			args = {},
 		},
 	},
+}
+
+local alignValues = {
+	LEFT   = "Left",
+	RIGHT  = "Right",
+	CENTER = "Center",
+-- TOP & BOTTOM are not yet included, as the ResizeBlock function
+-- awaits icon and text to be horizontally aligned
+--	TOP    = "Top",
+--	BOTTOM = "Bottom",
 }
 
 local pluginSettings = {
@@ -280,8 +296,8 @@ local pluginSettings = {
 			key = "blockHeight",
 			name = L["Block Height"],
 			desc = L["Adjusts the plugin's height."],
-			min  = 20,
-			max  = 50,
+			min  =  20,
+			max  = 100,
 			step =  1,
 		},	
 		{
@@ -419,6 +435,70 @@ local pluginSettings = {
 			key = "hideTooltipOnClick",
 			name = L["Hide tooltip on click"],
 			desc = L["Hide the plugin's tooltip when you click the block."],
+		},
+		{
+			key = "forceVisible",
+			name = L["Force Visible"],
+			desc = L["Force this plugin to be visible, even if it should be hidden by any other option."],
+		},
+		
+		{ 
+			key = "iconAlign",
+			name = "Icon Align",
+			desc = "",
+			values = alignValues,
+		},
+		{
+			key = "iconRelText",
+			name = "Icon is relative to text",
+			desc = "Align the icon relative to the text and not to the main block.",
+		},
+		{ 
+			key = "iconAlignTo",
+			name = "Icon Align To",
+			desc = "",
+			values = alignValues,
+		},
+		{
+			key = "iconAlignXOffs",
+			name = "Icon X Offset",
+			desc = "",
+			min = -20, max = 20, step = 1,
+		},
+		{
+			key = "iconAlignYOffs",
+			name = "Icon Y Offset",
+			desc = "",
+			min = -20, max = 20, step = 1,
+		},
+		{ 
+			key = "textAlign",
+			name = "Text Align",
+			desc = "",
+			values = alignValues,
+		},
+		{
+			key = "textRelIcon",
+			name = "Text is relative to icon",
+			desc = "Align the text relative to the icon and not to the main block.",
+		},
+		{ 
+			key = "textAlignTo",
+			name = "Text Align To",
+			desc = "",
+			values = alignValues,
+		},		
+		{
+			key = "textAlignXOffs",
+			name = "Text X Offset",
+			desc = "",
+			min = -20, max = 20, step = 1,
+		},
+		{
+			key = "textAlignYOffs",
+			name = "Text Y Offset",
+			desc = "",
+			min = -20, max = 20, step = 1,
 		},
 	},
 }

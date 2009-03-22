@@ -83,6 +83,8 @@ L["Block Customization"] = "Block Einstellungen"
 L["Advanced Settings"] = "Erweiterte Einstellungen"
 L["Icon Size"] = "Icon Gr\195\182\195\159e"
 L["The size of the plugin's icon."] = "Die Gr\195\182\195\159e des Icons."
+L["Force Visible"] = "Sichtbarkeit erzwingen"
+L["Force this plugin to be visible, even if it should be hidden by any other option."] = "Dieses Plugin immer anzeigen, selbst wenn es durch andere Optionen ausgeblendet werden w\195\188rde."
 
 --[[
 

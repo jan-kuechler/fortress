@@ -82,3 +82,5 @@ L["Block Customization"] = true
 L["Advanced Settings"] = true
 L["Icon Size"] = true
 L["The size of the plugin's icon."] = true
+L["Force Visible"] = true
+L["Force this plugin to be visible, even if it should be hidden by any other option."] = true
