@@ -1,9 +1,9 @@
-## Interface: 30000
+## Interface: 31000
 ## Title: Fortress
 ## Notes: A display for LibDataBroker-1.1
 ## Author: andreasg, Borlox
 ## Version: @project-version@ 
-## X-Email: kuchen_@gmx.de
+## X-Email: borlox@worldofwar.de
 ## OptionalDeps: Ace3, LibDataBroker-1.1, LegoBlock, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
 ## X-Embeds: Ace3, LibDataBroker-1.1, LegoBlock, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
 
