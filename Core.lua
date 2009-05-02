@@ -592,6 +592,10 @@ function Fortress:EnableDataObject(name)
 	if obj.OnCreate then
 		obj.OnCreate(obj, frame)
 	end
+	
+	if db.showLinked then
+		self:UpdateAllObjects(true)
+	end
 end
 
 function Fortress:DisableDataObject(name)
@@ -660,13 +664,13 @@ end
 --------
 -- Update
 --------
-function Fortress:UpdateAllObjects()
+function Fortress:UpdateAllObjects(spare)
 	for name, obj in pairs(dataObjects) do
-		self:UpdateObject(name, obj)
+		self:UpdateObject(name, obj, spare)
 	end
 end
 
-function Fortress:UpdateObject(name, obj)
+function Fortress:UpdateObject(name, obj, spare)
 	if not db.pluginSettings[name].enabled then return end
 	local frame = frames[name]
 	if frame then
@@ -686,10 +690,12 @@ function Fortress:UpdateObject(name, obj)
 		
 		db.blockDB[name].locked = GetPluginSetting(name, "blockLocked")
 
-		self:UpdateBackdrop(name)
-		self:UpdateColor(name)
-		self:UpdateAlignment(name)
-		self:UpdateFontAndSize(name)
+		if not spare then
+			self:UpdateBackdrop(name)
+			self:UpdateColor(name)
+			self:UpdateAlignment(name)
+			self:UpdateFontAndSize(name)
+		end
 	end
 end
 
