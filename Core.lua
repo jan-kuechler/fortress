@@ -551,8 +551,6 @@ function Fortress:CreateDataObject(name, obj)
 		db.pluginSettings[name].enabled = db.enableNewPlugins
 	end
 	
-	dataObjects[name] = obj
-	self:AddObjectOptions(name)
 	if db.pluginSettings[name].enabled then
 		self:EnableDataObject(name)
 	end
@@ -723,7 +721,7 @@ function Fortress:UpdateFontAndSize(name)
 	local scale    = GetPluginSetting(name, "blockScale")
 	local height   = GetPluginSetting(name, "blockHeight")
 	local iconSize = GetPluginSetting(name, "iconSize")
-	
+		
 	local font = media:Fetch(media.MediaType.FONT, fontName)
 	
 	frame.text:SetFont(font, fontSize)
@@ -761,6 +759,8 @@ function Fortress:UpdateAlignment(name)
 	local textRelIcon    = GetPluginSetting(name, "textRelIcon")
 	local textAlignXOffs = GetPluginSetting(name, "textAlignXOffs")
 	local textAlignYOffs = GetPluginSetting(name, "textAlignYOffs")
+	
+	local showIcon = GetPluginSetting(name, "showIcon")
 	
 	local iconRelFrame = frame
 	local textRelFrame = frame
