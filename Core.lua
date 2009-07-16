@@ -376,6 +376,7 @@ function Fortress:OnInitialize()
 			pluginSettings = {
 				['*'] = {
 					enabled = true,
+					isNew   = true,
 				},
 			},
 			masterSettings = {
@@ -504,7 +505,7 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 		return
 	end
 
-	self:CreateDataObject(name, obj, db.enableNewPlugins)
+	self:CreateDataObject(name, obj)
 end
 
 function Fortress:AttributeChanged(event, name, key, value)
@@ -540,16 +541,19 @@ end
 --------
 -- Object handling 
 --------
-function Fortress:CreateDataObject(name, obj, enable)
+function Fortress:CreateDataObject(name, obj)
 	if dataObjects[name] then return end
+		
+	dataObjects[name] = obj
+	self:AddObjectOptions(name)
 	
-	if enable == nil then
-		enable = true
+	if db.pluginSettings[name].isNew then
+		db.pluginSettings[name].enabled = db.enableNewPlugins
 	end
 	
 	dataObjects[name] = obj
 	self:AddObjectOptions(name)
-	if enable and db.pluginSettings[name].enabled then
+	if db.pluginSettings[name].enabled then
 		self:EnableDataObject(name)
 	end
 end
@@ -560,6 +564,7 @@ function Fortress:EnableDataObject(name)
 		return
 	end
 	
+	db.pluginSettings[name].isNew = false
 	db.pluginSettings[name].enabled = true
 	
 	if obj.secureTemplates then
