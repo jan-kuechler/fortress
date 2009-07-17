@@ -212,6 +212,20 @@ local options = {
 					type = "toggle",
 					order = 6,
 				},
+				--@alpha@
+				debug = {
+					name = "Debug",
+					desc = "Enable debug messages.",
+					type = "toggle",
+					order = 98,
+				},
+				deprecated = {
+					name = "Deprecated",
+					desc = "Complain about deprecated attributes.",
+					type = "toggle",
+					order = 99,
+				},
+				--@end-alpha@
 			},
 		},
 		masterPluginSettings = {

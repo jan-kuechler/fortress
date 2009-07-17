@@ -68,12 +68,20 @@ end
 -- utility functions
 --------
 local function Debug(...)
---	ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
+--@alpha@
+	if db.debug then
+		ChatFrame1:AddMessage(strjoin(" ", "Fortess Debug:", tostringall(...)), 0, 1, 0)
+	end
+--@end-alpha@
 end
 Fortress.Debug = Debug
 
 local function Deprecated(name, func)
-	Debug(name, "uses a deprecated function:", func);
+--@alpha@
+	if db.deprecated then
+		ChatFrame1:AddMessage(("%s uses a deprecated attribute: %s"):format(name, func), 0, 1, 0)
+	end
+--@end-alpha@
 end
 Fortress.Deprecated = Deprecated
 
@@ -243,6 +251,11 @@ end
 --------
 -- block updaters
 --------
+
+----
+-- The updater functions handle any (enabled) do's value change.
+-- That may happen very often!
+
 local function TextUpdater(frame, value, name)
 	local obj = dataObjects[name]
 	local showLabel = GetPluginSetting(name, "showLabel")
@@ -438,6 +451,8 @@ function Fortress:OnInitialize()
 			ignoreLaunchers   = false,
 			showLinked        = false,
 			enableNewPlugins  = true,
+			debug             = false,
+			deprecated        = false,
 		},
 	}
 	local defaults = self.defaults
@@ -509,7 +524,6 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 end
 
 function Fortress:AttributeChanged(event, name, key, value)
-	if not db.pluginSettings[name].enabled then return end
 	local f = frames[name]
 	local obj = dataObjects[name]
 	
@@ -665,8 +679,14 @@ function Fortress:HideLinked(block)
 end
 
 --------
--- Update
+-- Configuration Update
 --------
+
+----
+-- These functions are called whenever the plugin configuration changes
+-- That's not often and only user initiated, so they do not need to be
+-- highly optimized.
+
 function Fortress:UpdateAllObjects(spare)
 	for name, obj in pairs(dataObjects) do
 		self:UpdateObject(name, obj, spare)
@@ -832,3 +852,14 @@ function Fortress:ToggleLaunchers()
 		end
 	end
 end
+
+--@do-not-package@
+-- Profiling helper
+
+_G.Fortress = Fortress
+
+for name, func in pairs(uniqueUpdaters) do
+	Fortress["UPDATER_"..name] = func
+end
+
+--@end-do-not-package@
