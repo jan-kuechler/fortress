@@ -13,6 +13,7 @@ local dataObjects = {}
 local strTable    = {}
 local backdrops   = {}
 local insets      = {}
+local launcherText = {}
 
 --------
 -- LegoBlock hacks )-:
@@ -256,6 +257,13 @@ end
 -- The updater functions handle any (enabled) do's value change.
 -- That may happen very often!
 
+local function BlockHasText(frame, name)
+	frame:ShowText()
+	if GetPluginSetting(name, "fixedWidth") then
+		frame.text:SetWidth(frame.text:GetStringWidth())
+	end
+end
+
 local function TextUpdater(frame, value, name)
 	local obj = dataObjects[name]
 	local showLabel = GetPluginSetting(name, "showLabel")
@@ -308,11 +316,36 @@ local function TextUpdater(frame, value, name)
 	end
 	
 	if hasText then
-		frame:ShowText()
-		if GetPluginSetting(name, "fixedWidth") then
-			frame.text:SetWidth(frame.text:GetStringWidth())
-		end
+		BlockHasText(frame, name)
 	end
+end
+
+local function LauncherTextUpdater(frame, value, name)
+	local obj = dataObjects[name]
+
+	local clrDB = GetPluginSetting(name, "textColor")
+	local textColor = RGBToHex(clrDB.r, clrDB.g, clrDB.b)
+	      clrDB = GetPluginSetting(name, "labelColor")
+	local labelColor = RGBToHex(clrDB.r, clrDB.g, clrDB.b)
+
+	
+	local showLabel = GetPluginSetting(name, "showLabel")
+	local showText  = GetPluginSetting(name, "showText")
+	
+	local hasText = false
+	
+	if showLabel and obj.label then
+		frame.text:SetFormattedText("|cff%s%s|r", labelColor, obj.label)
+		hasText = true
+	elseif showText then
+		local text = launcherText[name] or name
+		frame.text:SetFormattedText("|cff%s%s|r", textColor, text)
+		hasText = true
+	end
+	
+	if hasText then
+		BlockHasText(frame, name)
+	end		
 end
 
 local function IconColorUpdater(frame, value, name)
@@ -376,6 +409,14 @@ local updaters = {
 for k, v in pairs(uniqueUpdaters) do
 	updaters[k] = v
 end
+
+local launcherUpdaters = {
+	tocname = function(frame, name, value)
+		launerText[name] = GetAddOnMetadata(value, "Title")
+		LauncherTextUpdater(frame, name, value)
+	end,
+	label   = LauncherTextUpdater,
+}
 
 --------
 -- Ace3 callbacks
