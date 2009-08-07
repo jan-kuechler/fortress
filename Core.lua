@@ -119,13 +119,29 @@ local function RGBToHex(r, g, b)
 	return ("%02x%02x%02x"):format(r*255, g*255, b*255)	
 end
 
+-- Blocks are hidden by setting their alpha to 0, so
+-- they still receive mouse movements (OnEnter => Hide on mouse out).
+-- The text field must be hidden though, as embedded
+-- textures do not recognize the alpha value.
+local function HideSingleBlock(block)
+	block:SetAlpha(0)
+	block.text:Hide()
+	block.hidden = true -- keep the text updater from showing the text
+end
+
+local function ShowSingleBlock(block, name)
+	block:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+	block.text:Show()
+	block.hidden = false
+end
+
 local function ShowBlocks(block, name)
 	if db.hideAllOnMouseOut then
 		Fortress:ShowAllObjects()
 	elseif db.showLinked then
 		Fortress:ShowLinked(block)
 	else
-		block:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+		ShowSingleBlock(block, name)
 	end
 end
 
@@ -135,7 +151,7 @@ local function HideBlocks(block, name)
 	elseif db.showLinked and BlockIsLinked(block) then
 		Fortress:HideLinked(block)
 	elseif GetPluginSetting(name, "hideOnMouseOut") and not GetPluginSetting(name, "forceVisible") then
-		block:SetAlpha(0)
+		HideSingleBlock(block)
 	end
 end
 
@@ -318,6 +334,10 @@ local function TextUpdater(frame, value, name)
 	if hasText then
 		BlockHasText(frame, name)
 	end
+	
+	if frame.hidden then -- see HideSingleBlock
+		frame.text:Hide()
+	end
 end
 
 local function LauncherTextUpdater(frame, value, name)
@@ -346,6 +366,10 @@ local function LauncherTextUpdater(frame, value, name)
 	if hasText then
 		BlockHasText(frame, name)
 	end		
+	
+	if frame.hidden then
+		frame.text:Hide()
+	end
 end
 
 local function IconColorUpdater(frame, value, name)
@@ -672,15 +696,17 @@ function Fortress:HideAllObjects()
 		if (db.showLinked and BlockIsLinked(frame) or true) and 
 		   (not GetPluginSetting(name, "forceVisible")) 
 		   then
-			frame:SetAlpha(0)
+			--frame:SetAlpha(0)
+			HideSingleBlock(frame)
 		end
 	end
 end
 
 function Fortress:ShowAllObjects(force)
 	for name, frame in pairs(frames) do
-		local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
-		frame:SetAlpha(alpha)
+		--local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
+		--frame:SetAlpha(alpha)
+		ShowSingleBlock(frame, name)
 	end
 end
 
@@ -689,8 +715,9 @@ function Fortress:ShowLinked(block, force)
 	local i = 1
 	for name, frame in pairs(frames) do
 		if frame == block or BlockIsLinkedTo(block, frame) then
-			local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
-			frame:SetAlpha(alpha)
+			--local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
+			--frame:SetAlpha(alpha)
+			ShowSingleBlock(frame, name)
 			linkedBlocks[i] = frame
 			i = i + 1
 		end
@@ -706,14 +733,16 @@ function Fortress:HideLinked(block)
 	if #linkedBlocks then
 		for i, frame in ipairs(linkedBlocks) do
 			if not GetPluginSetting(frame.name, "forceVisible") then
-				frame:SetAlpha(0)
+				--frame:SetAlpha(0)
+				HideSingleBlock(frame)
 			end
 			linkedBlocks[i] = nil
 		end
 	else
 		for name, frame in pairs(frames) do
 			if (frame == block or BlockIsLinkedTo(block, frame)) and not GetPluginSetting(name, "forceVisible") then
-				frame:SetAlpha(0)
+				--frame:SetAlpha(0)
+				HideSingleBlock(frame)
 			end		
 		end
 	end
@@ -747,9 +776,11 @@ function Fortress:UpdateObject(name, obj, spare)
 		   and (db.hideAllOnMouseOut or (db.showLinked and BlockIsLinked(frame)) or GetPluginSetting(name, "hideOnMouseOut"))
 		   and not GetPluginSetting(name, "forceVisible") 
 		   then
-			frame:SetAlpha(0)
+			--frame:SetAlpha(0)
+			HideSingleBlock(frame)
 		else
-			frame:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+			--frame:SetAlpha(GetPluginSetting(name, "blockAlpha"))
+			ShowSingleBlock(frame, name)
 		end
 		
 		db.blockDB[name].locked = GetPluginSetting(name, "blockLocked")
