@@ -826,9 +826,26 @@ function Fortress:UpdateAlignment(name)
 	local iconRelFrame = frame
 	local textRelFrame = frame
 	
+	-- Some hacks/overrides so that hide icon does not missalign the
+	-- text.
+	if not showIcon and textRelIcon then
+		local checkoffs = false
+		if textAlign == "LEFT" and textAlignTo == "RIGHT" then
+			textAlignTo = "LEFT"
+			checkoffs = true
+		elseif textAlign == "RIGHT" and textAlignTo == "LEFT" then
+			textAlignTo = "RIGHT"
+			checkoffs = true
+		end
+		
+		if checkoffs and textAlignXOffs == 0 then
+			textAlignXOffs = 10
+		end
+	end
+	
 	if iconRelText then
 		iconRelFrame = frame.text
-	elseif textRelIcon then
+	elseif textRelIcon and showIcon then
 		textRelFrame = frame.icon
 	end
 	
