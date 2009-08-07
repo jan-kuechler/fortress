@@ -6,6 +6,9 @@ local AceCfgReg = LibStub("AceConfigRegistry-3.0")
 local AceCfgDlg = LibStub("AceConfigDialog-3.0")
 local AceCfgCmd = LibStub("AceConfigCmd-3.0")
 
+local media = LibStub("LibSharedMedia-3.0")
+local hasWidgets = AceGUImediaWidgets ~= nil
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Fortress")
 
 local db
@@ -348,8 +351,8 @@ local pluginSettings = {
 			key = "font",
 			name = L["Font"],
 			desc = L["The font for the plugin text."],
-			dialogControl = "LSM30_Font",
-			values = AceGUIWidgetLSMlists.font,
+			dialogControl = hasWidgets and "LSM30_Font" or nil, -- fallback to default control, if mediaWidgets is not available
+			values = media:HashTable("font"), 
 		},
 		{
 			key = "fontSize",
@@ -380,8 +383,8 @@ local pluginSettings = {
 			key = "background",
 			name = L["Background"],
 			desc = L["The background for the plugin."],
-			dialogControl = "LSM30_Background",
-			values = AceGUIWidgetLSMlists.background,
+			dialogControl = hasWidgets and "LSM30_Background" or nil,
+			values = media:HashTable("background"),
 		},
 		{
 			key = "blockAlpha",
@@ -404,8 +407,8 @@ local pluginSettings = {
 			key = "border",
 			name = L["Border"],
 			desc = L["The border texture for the plugin. Use 'None' to show no border."],
-			dialogControl = "LSM30_Border",		
-			values = AceGUIWidgetLSMlists.border,
+			dialogControl = hasWidgets and "LSM30_Border" or nil,		
+			values = media:HashTable("border"), 
 		},
 		{
 			key = "borderColor",
