@@ -7,7 +7,7 @@ local AceCfgDlg = LibStub("AceConfigDialog-3.0")
 local AceCfgCmd = LibStub("AceConfigCmd-3.0")
 
 local media = LibStub("LibSharedMedia-3.0")
-local hasWidgets = AceGUImediaWidgets ~= nil
+local hasWidgets = AceGUISharedMediaWidgets ~= nil
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Fortress")
 
