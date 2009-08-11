@@ -282,6 +282,11 @@ local pluginSettings = {
 			desc = L["Hide this plugin in combat."],
 		},
 		{
+			key = "hideOutOfCombat",
+			name = L["Hide out of combat"],
+			desc = L["Hide this plugin out of combat."],
+		},
+		{
 			key = "hideOnMouseOut",
 			name = L["Hide on mouse out"],
 			desc = L["Hide this plugin until the mouse is over the frame."],

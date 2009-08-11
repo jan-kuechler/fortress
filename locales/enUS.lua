@@ -86,3 +86,5 @@ L["Force Visible"] = true
 L["Force this plugin to be visible, even if it should be hidden by any other option."] = true
 L["Enable new plugins"] = true
 L["Enable plugins by default, when they are loaded the first time."] = true
+L["Hide out of combat"] = true
+L["Hide this plugin out of combat."] = true

@@ -480,6 +480,7 @@ function Fortress:OnInitialize()
 				blockWidth = 100,
 				
 				hideInCombat        = false,
+				hideOutOfCombat     = false,
 				disableTooltip      = false,
 				hideTooltipInCombat = false,
 				hideOnMouseOut      = false,	
@@ -605,14 +606,18 @@ function Fortress:PLAYER_REGEN_DISABLED()
 	for name, frame in pairs(frames) do
 		if GetPluginSetting(name, "hideInCombat") then
 			frame:Hide()
+			frame.combatEndFunc = frame.Show
+		elseif GetPluginSetting(name, "hideOutOfCombat") then
+			frame:Show()
+			frame.combatEndFunc = frame.Hide
 		end
 	end
 end
 
 function Fortress:PLAYER_REGEN_ENABLED()
 	for _, f in pairs(frames) do
-		if f.db.enabled then
-			f:Show()
+		if f.db.enabled and f.combatEndFunc then
+			f.combatEndFunc(f)
 		end
 	end
 end
@@ -771,7 +776,7 @@ function Fortress:UpdateObject(name, obj, spare)
 		for key, func in pairs(uniqueUpdaters) do
 			func(frame, obj[key], name) 
 		end	
-		
+
 		if not MouseIsOver(frame)
 		   and (db.hideAllOnMouseOut or (db.showLinked and BlockIsLinked(frame)) or GetPluginSetting(name, "hideOnMouseOut"))
 		   and not GetPluginSetting(name, "forceVisible") 
@@ -790,6 +795,10 @@ function Fortress:UpdateObject(name, obj, spare)
 			self:UpdateColor(name)
 			self:UpdateAlignment(name)
 			self:UpdateFontAndSize(name)
+		end
+		
+		if GetPluginSetting(name, "hideOutOfCombat") and not InCombatLockdown() then
+			frame:Hide()
 		end
 	end
 end

@@ -87,7 +87,8 @@ L["Force Visible"] = "Sichtbarkeit erzwingen"
 L["Force this plugin to be visible, even if it should be hidden by any other option."] = "Dieses Plugin immer anzeigen, selbst wenn es durch andere Optionen ausgeblendet werden w\195\188rde."
 L["Enable new plugins"] = "Neue Plugins aktivieren"
 L["Enable plugins by default, when they are loaded the first time."] = "Neue Plugins aktivieren, wenn sie das erste mal geladen werden." 
-
+L["Hide out of combat"] = "Au\195\159erhalb des Kampfes verstecken"
+L["Hide this plugin out of combat."] = "Dieses Plugin au\195\159erhalb des Kampfes verstecken."
 
 --[[
 
