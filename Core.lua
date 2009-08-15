@@ -15,6 +15,7 @@ local backdrops   = {}
 local insets      = {}
 local launcherText = {}
 
+-- This is the type attribute for dummy objects, used to create spacer blocks
 Fortress.DummyType = "FortressDummy"
 
 --------
@@ -454,6 +455,7 @@ local SupportedTypes = {
 	["launcher"]    = true,
 	[Fortress.DummyType] = true,
 }
+-- Support type of nil
 setmetatable(SupportedTypes, { __index = function(self, key)
 	if key == nil then
 		return true
@@ -555,7 +557,6 @@ function Fortress:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "Refresh")
 	
 	self:SetEnabledState(db.enabled)
-	--self:InitEmptyBlocks()
 	self:RegisterOptions()
 end
 
@@ -653,7 +654,7 @@ function Fortress:CreateDataObject(name, obj)
 	dataObjects[name] = obj
 	self:AddObjectOptions(name, obj)
 	
-	if db.pluginSettings[name].isNew and not obj.type == "FortressDummy" then
+	if db.pluginSettings[name].isNew and not IsDummy(name) then
 		db.pluginSettings[name].enabled = db.enableNewPlugins
 	end
 	
@@ -723,7 +724,6 @@ function Fortress:HideAllObjects()
 		if (db.showLinked and BlockIsLinked(frame) or true) and 
 		   (not GetPluginSetting(name, "forceVisible")) 
 		   then
-			--frame:SetAlpha(0)
 			HideSingleBlock(frame)
 		end
 	end
@@ -731,8 +731,6 @@ end
 
 function Fortress:ShowAllObjects(force)
 	for name, frame in pairs(frames) do
-		--local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
-		--frame:SetAlpha(alpha)
 		ShowSingleBlock(frame, name)
 	end
 end
@@ -742,8 +740,6 @@ function Fortress:ShowLinked(block, force)
 	local i = 1
 	for name, frame in pairs(frames) do
 		if frame == block or BlockIsLinkedTo(block, frame) then
-			--local alpha = force and 1 or GetPluginSetting(name, "blockAlpha")
-			--frame:SetAlpha(alpha)
 			ShowSingleBlock(frame, name)
 			linkedBlocks[i] = frame
 			i = i + 1
@@ -760,7 +756,6 @@ function Fortress:HideLinked(block)
 	if #linkedBlocks then
 		for i, frame in ipairs(linkedBlocks) do
 			if not GetPluginSetting(frame.name, "forceVisible") then
-				--frame:SetAlpha(0)
 				HideSingleBlock(frame)
 			end
 			linkedBlocks[i] = nil
@@ -768,7 +763,6 @@ function Fortress:HideLinked(block)
 	else
 		for name, frame in pairs(frames) do
 			if (frame == block or BlockIsLinkedTo(block, frame)) and not GetPluginSetting(name, "forceVisible") then
-				--frame:SetAlpha(0)
 				HideSingleBlock(frame)
 			end		
 		end
@@ -807,10 +801,8 @@ function Fortress:UpdateObject(name, obj, spare)
 		   and (db.hideAllOnMouseOut or (db.showLinked and BlockIsLinked(frame)) or GetPluginSetting(name, "hideOnMouseOut"))
 		   and not GetPluginSetting(name, "forceVisible") 
 		   then
-			--frame:SetAlpha(0)
 			HideSingleBlock(frame)
 		else
-			--frame:SetAlpha(GetPluginSetting(name, "blockAlpha"))
 			ShowSingleBlock(frame, name)
 		end
 		
@@ -894,8 +886,7 @@ function Fortress:UpdateAlignment(name)
 	
 	local justify = "LEFT"
 	
-	-- Some hacks/overrides so that hide icon does not missalign the
-	-- text.
+	-- Some hacks/overrides so that hide icon does not missalign the text.
 	if not showIcon and textRelIcon then
 		local checkoffs = false
 		if textRelIcon and

@@ -1,5 +1,12 @@
+-- Empty blocks can be used to create spacer blocks for Fortress.
+-- They are actually data objects of the type "FortressDummy", no other
+-- display addon should show them (type attribute is set and neither 
+-- "data source" nor "launcher").
+
 local Fortress = LibStub("AceAddon-3.0"):GetAddon("Fortress")
 local EB = Fortress:NewModule("EmptyBlocks")
+
+-- TODO: localize me!
 
 local broker = LibStub("LibDataBroker-1.1")
 
