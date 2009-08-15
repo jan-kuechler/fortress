@@ -20,3 +20,4 @@ locales\locales.xml
 
 Core.lua
 Options.lua
+EmptyBlocks.lua

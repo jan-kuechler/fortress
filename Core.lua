@@ -15,6 +15,8 @@ local backdrops   = {}
 local insets      = {}
 local launcherText = {}
 
+Fortress.DummyType = "FortressDummy"
+
 --------
 -- LegoBlock hacks )-:
 --------
@@ -99,6 +101,11 @@ local function IsLauncher(name)
 	return dataObjects[name] and dataObjects[name].type == "launcher"
 end
 Fortress.IsLauncher = IsLauncher
+
+local function IsDummy(name)
+	return dataObjects[name] and dataObjects[name].type == Fortress.DummyType
+end
+Fortress.IsDummy = IsDummy
 
 local function GetAnchors(frame)
 	local x, y = frame:GetCenter()
@@ -442,6 +449,18 @@ local launcherUpdaters = {
 	label   = LauncherTextUpdater,
 }
 
+local SupportedTypes = {
+	["data source"] = true,
+	["launcher"]    = true,
+	[Fortress.DummyType] = true,
+}
+setmetatable(SupportedTypes, { __index = function(self, key)
+	if key == nil then
+		return true
+	end
+	return nil
+end })
+
 --------
 -- Ace3 callbacks
 --------
@@ -512,6 +531,7 @@ function Fortress:OnInitialize()
 			pluginUseMaster = {
 				['*'] = {}
 			},
+			emptyBlocks = {},
 			enabled           = true,
 			hideAllOnMouseOut = false,
 			ignoreLaunchers   = false,
@@ -535,6 +555,7 @@ function Fortress:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "Refresh")
 	
 	self:SetEnabledState(db.enabled)
+	--self:InitEmptyBlocks()
 	self:RegisterOptions()
 end
 
@@ -581,8 +602,8 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	end
 --@end-alpha@
 
-	-- support data objects without type set, allthough that's not correct
-	if t and (t ~= "data source" and t ~= "launcher") then
+	if not SupportedTypes[t] then
+		Debug("Unsupported: ", name, t)
 		return
 	end
 
@@ -618,6 +639,7 @@ function Fortress:PLAYER_REGEN_ENABLED()
 	for _, f in pairs(frames) do
 		if f.db.enabled and f.combatEndFunc then
 			f.combatEndFunc(f)
+			f.combatEndFunc = nil
 		end
 	end
 end
@@ -629,9 +651,9 @@ function Fortress:CreateDataObject(name, obj)
 	if dataObjects[name] then return end
 		
 	dataObjects[name] = obj
-	self:AddObjectOptions(name)
+	self:AddObjectOptions(name, obj)
 	
-	if db.pluginSettings[name].isNew then
+	if db.pluginSettings[name].isNew and not obj.type == "FortressDummy" then
 		db.pluginSettings[name].enabled = db.enableNewPlugins
 	end
 	
@@ -769,12 +791,16 @@ function Fortress:UpdateAllObjects(spare)
 end
 
 function Fortress:UpdateObject(name, obj, spare)
+	Debug("UpdateObject", name)
+
 	if not db.pluginSettings[name].enabled then return end
 	local frame = frames[name]
 	if frame then
 		obj = obj or dataObjects[name]
 		for key, func in pairs(uniqueUpdaters) do
-			func(frame, obj[key], name) 
+			if obj[key] then
+				func(frame, obj[key], name) 
+			end
 		end	
 
 		if not MouseIsOver(frame)

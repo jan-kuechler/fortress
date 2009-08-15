@@ -22,7 +22,7 @@ local IsLauncher = Fortress.IsLauncher
 -- utility functions
 --------
 local function GetAppName(name)
-	return string.gsub(name, "Fortress", "")
+	return string.gsub(name, "^Fortress", "")
 end
 
 --------
@@ -706,6 +706,11 @@ function Fortress:RegisterOptions()
 	self.optionsFrames = {}
 	
 	options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	
+	for name, module in self:IterateModules() do
+		options.args[name] = module:GetOptionsTable()
+	end
+	
 	CreatePluginOptions()
 	
 	AceCfgReg:RegisterOptionsTable(appName, options)
@@ -741,9 +746,10 @@ local function SortSubCategories(parent)
 	end
 end
 
-function Fortress:AddObjectOptions(name)
+function Fortress:AddObjectOptions(name, obj)
 	local t = self.optionsFrames[name] or {}
-	t.name = name
+	local cfgname = obj.configName or name
+	t.name = cfgname
 	t.desc = L["Options for %s"]:format(name)
 	t.type = "group"
 	t.childGroups = "tab"
@@ -751,8 +757,8 @@ function Fortress:AddObjectOptions(name)
 	t.get  = PluginGet
 	t.set  = PluginSet
 	AceCfgReg:RegisterOptionsTable("Fortress"..name, t)
-	local panel = AceCfgDlg:AddToBlizOptions("Fortress"..name, "- "..name, "Fortress")
-	panel.obj:SetTitle(name)
+	local panel = AceCfgDlg:AddToBlizOptions("Fortress"..name, "- "..cfgname, "Fortress")
+	panel.obj:SetTitle(cfgname)
 	
 	SortSubCategories("Fortress")
 end
