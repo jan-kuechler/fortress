@@ -89,7 +89,14 @@ L["Enable new plugins"] = "Neue Plugins aktivieren"
 L["Enable plugins by default, when they are loaded the first time."] = "Neue Plugins aktivieren, wenn sie das erste mal geladen werden." 
 L["Hide out of combat"] = "Au\195\159erhalb des Kampfes verstecken"
 L["Hide this plugin out of combat."] = "Dieses Plugin au\195\159erhalb des Kampfes verstecken."
-
+L["Empty Blocks"] = "Leere Bl\195\182cke"
+L["Create empty block"] = "Leeren Block erstellen"
+L["Create an empty block, that can be used as a spacer."] = "Erstellt einen leeren Block, der als Abstandshalter benutzt werden kann."
+L["Show names"] = "Namen anzeigen"
+L["Display the names of the empty blocks. This setting is not saved."] = "Die Namen der leeren Bl\195\182cke anzeigen. Diese Einstellung wird nicht gespeichert."
+L["Note: Disable an empty block to remove it on the next reload."] = "Um einen leeren Block zu l\195\182schen, muss er deaktiviert werden. Deaktivierte leere Bl\195\182cke werden beim n\195\164chsten Start gel\195\182scht."
+L["Empty Block: %s"] = "Leerer Block: %s"
+L["There is allready a block named %s."] = "Es gibt schon einen leeren Block mit dem Namen %s."
 --[[
 
 Ä: \195\132 ä: \195\164
