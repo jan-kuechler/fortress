@@ -6,7 +6,7 @@
 local Fortress = LibStub("AceAddon-3.0"):GetAddon("Fortress")
 local EB = Fortress:NewModule("EmptyBlocks")
 
--- TODO: localize me!
+local L = LibStub("AceLocale-3.0"):GetLocale("Fortress")
 
 local broker = LibStub("LibDataBroker-1.1")
 
