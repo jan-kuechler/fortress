@@ -16,13 +16,13 @@ local showNames = false
 local objects = {}
 
 local options = {
-	name = "Empty Blocks",
+	name = L["Empty Blocks"],
 	type = "group",
 	childGroups = "select",
 	args = {
 		create = {
-		  name = "Create empty block",
-		  desc = "",
+		  name = L["Create empty block"],
+		  desc = L["Create an empty block, that can be used as a spacer."],
 			type = "input",
 			get  = nil,
 			set  = function(info, value)
@@ -30,15 +30,15 @@ local options = {
 			end,
 			validate = function(info, value)
 				if db.emptyBlocks[value] then
-					return ("There is allready a block named %s."):format(value)
+					return (L["There is allready a block named %s."]):format(value)
 				end
 				return true
 			end,
 			order = 1,
 		},
 		showText = {
-			name = "Show names",
-			desc = "",
+			name = L["Show names"],
+			desc = L["Display the names of the empty blocks. This setting is not saved."],
 			type = "toggle",
 			get  = function(info)
 				return showNames -- not saved!
@@ -50,7 +50,7 @@ local options = {
 			order = 2,
 		},
 		note = {
-			name = "Note: Disable an empty block to remove it on the next reload.",
+			name = L["Note: Disable an empty block to remove it on the next reload."],
 			type = "description",
 		},
 	},
@@ -80,7 +80,7 @@ local function Create(name, loading)
 		type = Fortress.DummyType,
 		name = name,
 		enabled = true,
-		configName = ("Empty Block: %s"):format(name),
+		configName = (L["Empty Block: %s"]):format(name),
 	})	
 end
 
@@ -100,7 +100,7 @@ end
 
 function EB:Create(name)
 	if db.emptyBlocks[name] then	
-		self:Print("There is allready a block named:", name)
+		self:Print((L["There is allready a block named %s."]):format(name))
 		return
 	end
 	
