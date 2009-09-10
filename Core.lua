@@ -18,6 +18,8 @@ local launcherText = {}
 -- This is the type attribute for dummy objects, used to create spacer blocks
 Fortress.DummyType = "FortressDummy"
 
+Fortress.DataObjects = dataObjects
+
 --------
 -- LegoBlock hacks )-:
 --------
@@ -509,7 +511,7 @@ function Fortress:OnInitialize()
 				hideTooltipOnClick = false,
 				forceVisible       = false,
 				
-				iconAlign = "LEFT",
+				--[[iconAlign = "LEFT",
 				iconAlignTo = "LEFT",
 				iconRelText = false,
 				iconAlignXOffs = 8,
@@ -519,7 +521,14 @@ function Fortress:OnInitialize()
 				textAlignTo = "RIGHT",
 				textRelIcon = true,
 				textAlignXOffs = 0,
+				textAlignYOffs = 0,]]--
+				
+				align = "left",
+				iconAlignXOffs = 8,
+				iconAlignYOffs = 0,
+				textAlignXOffs = 0,
 				textAlignYOffs = 0,
+						
 				
 				font       = "Friz Quadrata TT",
 				background = "Blizzard Tooltip",
@@ -682,6 +691,10 @@ function Fortress:EnableDataObject(name)
 	frame.name = name
 	frame.obj  = obj
 	frame.db   = db.pluginSettings[name]
+	
+	-- hide text and icon, thay may be shown later in UpdateObject
+	frame:HideText()
+	frame:HideIcon()
 		
 	frame:SetScript("OnClick", Block_OnClick)
 	frame:SetScript("OnEnter", Block_OnEnter)
@@ -867,6 +880,68 @@ end
 
 function Fortress:UpdateAlignment(name)
 	local frame = frames[name]
+	local obj   = dataObjects[name]
+	
+	local align = GetPluginSetting(name, "align")
+	local showIcon = GetPluginSetting(name, "showIcon")
+	
+	if not obj.icon then
+		showIcon = false
+	end
+	
+	local iconX = GetPluginSetting(name, "iconAlignXOffs")
+	local iconY = GetPluginSetting(name, "iconAlignYOffs")
+	local textX = GetPluginSetting(name, "textAlignXOffs")
+	local textY = GetPluginSetting(name, "textAlignYOffs")
+	
+	local textAlign, textRel, textAlignTo
+	local iconAlign, iconRel, iconAlignTo
+	local justify
+	
+	if not showIcon then
+		textAlign   = "CENTER"
+		textAlignTo = "CENTER"
+		textRel     = frame
+		justify     = "CENTER"
+	else
+		if align == "right" then
+			textAlign   = "RIGHT"
+			textAlignTo = "LEFT"
+			textRel     = frame.icon
+			justify     = "RIGHT"
+			
+			iconAlign   = "RIGHT"
+			iconAlignTo = "RIGHT"
+			iconRel     = frame
+		else
+			if align ~= "left" then
+				Debug("Strange align for",frame,":",align)
+			end
+			
+			textAlign   = "LEFT"
+			textAlignTo = "RIGHT"
+			textRel     = frame.icon
+			justify     = "LEFT"
+
+			iconAlign   = "LEFT"
+			iconAlignTo = "LEFT"
+			iconRel     = frame
+		end
+	end
+	
+	if showIcon then
+		frame.icon:ClearAllPoints()
+		frame.icon:SetPoint(iconAlign, iconRel, iconAlignTo, iconX, iconY)
+	end
+	frame.text:ClearAllPoints()
+	frame.text:SetPoint(textAlign, textRel, textAlignTo, textX, textY)
+	frame.text:SetJustifyH(justify)
+	
+	ResizeBlock(frame)
+end
+--[=[
+function Fortress:UpdateAlignment(name)
+	local frame = frames[name]
 	
 	local iconAlign      = GetPluginSetting(name, "iconAlign")
 	local iconAlignTo    = GetPluginSetting(name, "iconAlignTo")
@@ -913,7 +988,7 @@ function Fortress:UpdateAlignment(name)
 	
 	ResizeBlock(frame)
 end
-
+--]=]
 local insets_default = {left = 0, right = 0, top = 0, bottom = 0}
 
 function Fortress:UpdateBackdrop(name)

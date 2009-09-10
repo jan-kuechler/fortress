@@ -244,14 +244,19 @@ local options = {
 }
 
 local alignValues = {
-	LEFT   = "Left",
-	RIGHT  = "Right",
-	CENTER = "Center",
--- TOP & BOTTOM are not yet included, as the ResizeBlock function
--- awaits icon and text to be horizontally aligned
---	TOP    = "Top",
---	BOTTOM = "Bottom",
+	left = "Left",
+	right = "Right",
 }
+
+local function DisabledIfIconVisible(info)
+	local name = GetAppName(info.appName)
+	local obj = Fortress.DataObjects[name]
+	
+	if not obj.icon then
+		return true
+	end	
+	return not GetPluginSetting(name, "showIcon")
+end
 
 local pluginSettings = {
 	{
@@ -270,6 +275,11 @@ local pluginSettings = {
 			key = "showIcon",
 			name = L["Show Icon"],
 			desc = L["Show the plugin's icon."],
+			disabled = function(info)
+				local name = GetAppName(info.appName)
+				local obj = Fortress.DataObjects[name]
+				return obj.icon == nil
+			end,
 		},
 		{
 			key = "blockLocked",
@@ -464,52 +474,38 @@ local pluginSettings = {
 			desc = L["Force this plugin to be visible, even if it should be hidden by any other option."],
 		},
 		
-		{ 
-			key = "iconAlign",
-			name = "Icon Align",
+		-- Alignment
+		{ -- creates a line break
+			type = "description",
+			name = "",
 			desc = "",
-			values = alignValues,
 		},
 		{
-			key = "iconRelText",
-			name = "Icon is relative to text",
-			desc = "Align the icon relative to the text and not to the main block.",
-		},
-		{ 
-			key = "iconAlignTo",
-			name = "Icon Align To",
-			desc = "",
+			key = "align",
+			name = "Align",
+			desc = "Controls the block alignment.",
 			values = alignValues,
+			disabled = DisabledIfIconVisible,
+		},
+		{ -- creates a line break
+			type = "description",
+			name = "",
+			desc = "",
 		},
 		{
 			key = "iconAlignXOffs",
 			name = "Icon X Offset",
 			desc = "",
 			min = -20, max = 20, step = 1,
+			disabled = DisabledIfIconVisible,
 		},
 		{
 			key = "iconAlignYOffs",
 			name = "Icon Y Offset",
 			desc = "",
 			min = -20, max = 20, step = 1,
+			disabled = DisabledIfIconVisible,
 		},
-		{ 
-			key = "textAlign",
-			name = "Text Align",
-			desc = "",
-			values = alignValues,
-		},
-		{
-			key = "textRelIcon",
-			name = "Text is relative to icon",
-			desc = "Align the text relative to the icon and not to the main block.",
-		},
-		{ 
-			key = "textAlignTo",
-			name = "Text Align To",
-			desc = "",
-			values = alignValues,
-		},		
 		{
 			key = "textAlignXOffs",
 			name = "Text X Offset",
