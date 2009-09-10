@@ -97,6 +97,15 @@ L["Display the names of the empty blocks. This setting is not saved."] = "Die Na
 L["Note: Disable an empty block to remove it on the next reload."] = "Um einen leeren Block zu l\195\182schen, muss er deaktiviert werden. Deaktivierte leere Bl\195\182cke werden beim n\195\164chsten Start gel\195\182scht."
 L["Empty Block: %s"] = "Leerer Block: %s"
 L["There is allready a block named %s."] = "Es gibt schon einen leeren Block mit dem Namen %s."
+L["Left"] = "Links"
+L["Right"] = "Rechts"
+L["Align"] = "Anordnung"
+L["Controls the block alignment."] = "Bestimmt die Anordnung von Icon und Text auf dem Block."
+L["Icon X Offset"] = "Icon X Versatz"
+L["Icon Y Offset"] = "Icon Y Versatz"
+L["Text X Offset"] = "Text X Versatz"
+L["Text Y Offset"] = "Text Y Versatz"
+
 --[[
 
 Ä: \195\132 ä: \195\164
