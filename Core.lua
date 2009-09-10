@@ -511,24 +511,11 @@ function Fortress:OnInitialize()
 				hideTooltipOnClick = false,
 				forceVisible       = false,
 				
-				--[[iconAlign = "LEFT",
-				iconAlignTo = "LEFT",
-				iconRelText = false,
-				iconAlignXOffs = 8,
-				iconAlignYOffs = 0,
-				
-				textAlign = "LEFT",
-				textAlignTo = "RIGHT",
-				textRelIcon = true,
-				textAlignXOffs = 0,
-				textAlignYOffs = 0,]]--
-				
 				align = "left",
 				iconAlignXOffs = 8,
 				iconAlignYOffs = 0,
 				textAlignXOffs = 0,
 				textAlignYOffs = 0,
-						
 				
 				font       = "Friz Quadrata TT",
 				background = "Blizzard Tooltip",
@@ -939,56 +926,7 @@ function Fortress:UpdateAlignment(name)
 	
 	ResizeBlock(frame)
 end
---[=[
-function Fortress:UpdateAlignment(name)
-	local frame = frames[name]
-	
-	local iconAlign      = GetPluginSetting(name, "iconAlign")
-	local iconAlignTo    = GetPluginSetting(name, "iconAlignTo")
-	local iconRelText    = GetPluginSetting(name, "iconRelText")
-	local iconAlignXOffs = GetPluginSetting(name, "iconAlignXOffs")
-	local iconAlignYOffs = GetPluginSetting(name, "iconAlignYOffs")
-	local textAlign      = GetPluginSetting(name, "textAlign")
-	local textAlignTo    = GetPluginSetting(name, "textAlignTo")
-	local textRelIcon    = GetPluginSetting(name, "textRelIcon")
-	local textAlignXOffs = GetPluginSetting(name, "textAlignXOffs")
-	local textAlignYOffs = GetPluginSetting(name, "textAlignYOffs")
-	
-	local showIcon = GetPluginSetting(name, "showIcon")
-	
-	local iconRelFrame = frame
-	local textRelFrame = frame
-	
-	local justify = "LEFT"
-	
-	-- Some hacks/overrides so that hide icon does not missalign the text.
-	if not showIcon and textRelIcon then
-		local checkoffs = false
-		if textRelIcon and
-		   ((textAlign == "LEFT" and textAlignTo == "RIGHT") or
-		   (textAlign == "RIGHT" and textAlignTo == "LEFT"))
-		then
-			textAlign   = "CENTER"
-			textAlignTo = "CENTER"
-			justify     = "CENTER"
-		end
-	end
-	
-	if iconRelText then
-		iconRelFrame = frame.text
-	elseif textRelIcon and showIcon then
-		textRelFrame = frame.icon
-	end
-	
-	frame.icon:ClearAllPoints()
-	frame.text:ClearAllPoints()
-	frame.icon:SetPoint(iconAlign, iconRelFrame, iconAlignTo, iconAlignXOffs, iconAlignYOffs)
-	frame.text:SetPoint(textAlign, textRelFrame, textAlignTo, textAlignXOffs, textAlignYOffs)
-	frame.text:SetJustifyH(justify)
-	
-	ResizeBlock(frame)
-end
---]=]
+
 local insets_default = {left = 0, right = 0, top = 0, bottom = 0}
 
 function Fortress:UpdateBackdrop(name)

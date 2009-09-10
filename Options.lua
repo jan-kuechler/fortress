@@ -244,8 +244,8 @@ local options = {
 }
 
 local alignValues = {
-	left = "Left",
-	right = "Right",
+	left = L["Left"],
+	right = L["Right"],
 }
 
 local function DisabledIfIconVisible(info)
@@ -482,8 +482,8 @@ local pluginSettings = {
 		},
 		{
 			key = "align",
-			name = "Align",
-			desc = "Controls the block alignment.",
+			name = L["Align"],
+			desc = L["Controls the block alignment."],
 			values = alignValues,
 			disabled = DisabledIfIconVisible,
 		},
@@ -494,27 +494,27 @@ local pluginSettings = {
 		},
 		{
 			key = "iconAlignXOffs",
-			name = "Icon X Offset",
+			name = L["Icon X Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
 			disabled = DisabledIfIconVisible,
 		},
 		{
 			key = "iconAlignYOffs",
-			name = "Icon Y Offset",
+			name = L["Icon Y Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
 			disabled = DisabledIfIconVisible,
 		},
 		{
 			key = "textAlignXOffs",
-			name = "Text X Offset",
+			name = L["Text X Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
 		},
 		{
 			key = "textAlignYOffs",
-			name = "Text Y Offset",
+			name = L["Text Y Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
 		},
