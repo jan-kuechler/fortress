@@ -511,11 +511,21 @@ function Fortress:OnInitialize()
 				hideTooltipOnClick = false,
 				forceVisible       = false,
 				
+				simpleAlign = true,
+				-- simple:
 				align = "left",
+				-- extended:
+				iconAlign      = "LEFT",
+				iconAlignTo    = "LEFT",
+				textAlign      = "LEFT",
+				textAlignTo    = "RIGHT",
+				textJustify    = "LEFT",
+				alignRelMode   = "textToIcon",
+				-- both:
 				iconAlignXOffs = 8,
 				iconAlignYOffs = 0,
 				textAlignXOffs = 0,
-				textAlignYOffs = 0,
+				textAlignYOffs = 0,				
 				
 				font       = "Friz Quadrata TT",
 				background = "Blizzard Tooltip",
@@ -865,10 +875,7 @@ function Fortress:UpdateFontAndSize(name)
 	frame.optionsTbl.height = height
 end
 
-function Fortress:UpdateAlignment(name)
-	local frame = frames[name]
-	local obj   = dataObjects[name]
-	
+local function SimpleAlign(frame, obj, name)
 	local align = GetPluginSetting(name, "align")
 	local showIcon = GetPluginSetting(name, "showIcon")
 	
@@ -902,7 +909,7 @@ function Fortress:UpdateAlignment(name)
 			iconRel     = frame
 		else
 			if align ~= "left" then
-				Debug("Strange align for",frame,":",align)
+				Debug("Strange align for",name,":",align)
 			end
 			
 			textAlign   = "LEFT"
@@ -925,6 +932,51 @@ function Fortress:UpdateAlignment(name)
 	frame.text:SetJustifyH(justify)
 	
 	ResizeBlock(frame)
+end
+
+local function ExtendedAlign(frame, obj, name)
+	
+	local iconAlign   = GetPluginSetting(name, "iconAlign")
+	local iconAlignTo = GetPluginSetting(name, "iconAlignTo")
+	local iconX       = GetPluginSetting(name, "iconAlignXOffs")
+	local iconY       = GetPluginSetting(name, "iconAlignYOffs")
+	local textAlign   = GetPluginSetting(name, "textAlign")
+	local textAlignTo = GetPluginSetting(name, "textAlignTo")
+	local textX       = GetPluginSetting(name, "textAlignXOffs")
+	local textY       = GetPluginSetting(name, "textAlignYOffs")
+	local textJustify = GetPluginSetting(name, "textJustify")
+
+	local relMode     = GetPluginSetting(name, "alignRelMode")
+	
+	local textTo = frame
+	local iconTo = frame
+	
+	if relMode == "textToIcon" then
+		textTo = frame.icon
+	elseif relMode == "iconToText" then
+		iconTo = frame.text
+	elseif relMode ~= "bothToFrame" then
+		Debug("Strange relMode for",name,":",relMode)
+	end
+	
+	frame.icon:ClearAllPoints()
+	frame.text:ClearAllPoints()
+	frame.icon:SetPoint(iconAlign, iconTo, iconAlignTo, iconX, iconY)
+	frame.text:SetPoint(textAlign, textTo, textAlignTo, textX, textY)
+	frame.text:SetJustifyH(textJustify)
+	
+	ResizeBlock(frame)
+end
+
+function Fortress:UpdateAlignment(name)
+	local frame = frames[name]
+	local obj   = dataObjects[name]
+	
+	if GetPluginSetting(name, "simpleAlign") then
+		SimpleAlign(frame, obj, name)
+	else
+		ExtendedAlign(frame, obj, name)
+	end
 end
 
 local insets_default = {left = 0, right = 0, top = 0, bottom = 0}

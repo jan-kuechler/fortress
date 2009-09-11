@@ -244,11 +244,23 @@ local options = {
 }
 
 local alignValues = {
-	left = L["Left"],
+	left  = L["Left"],
 	right = L["Right"],
 }
 
-local function DisabledIfIconVisible(info)
+local pointValues = {
+	LEFT   = L["Left"],
+	RIGHT  = L["Right"],
+	CENTER = L["Center"],
+}
+
+local relModes = {
+	textToIcon  = L["Text to icon"],
+	iconToText  = L["Icon to text"],
+	bothToFrame = L["Both to block"],
+}
+
+local function DisabledIfIconInvisible(info)
 	local name = GetAppName(info.appName)
 	local obj = Fortress.DataObjects[name]
 	
@@ -256,6 +268,16 @@ local function DisabledIfIconVisible(info)
 		return true
 	end	
 	return not GetPluginSetting(name, "showIcon")
+end
+
+local function VisibleForSimpleMode(info)
+	local name = GetAppName(info.appName)
+	return not GetPluginSetting(name, "simpleAlign")
+end
+
+local function VisibleForExtendedMode(info)
+	local name = GetAppName(info.appName)
+	return GetPluginSetting(name, "simpleAlign")
 end
 
 local pluginSettings = {
@@ -481,42 +503,85 @@ local pluginSettings = {
 			desc = "",
 		},
 		{
+			key = "simpleAlign",
+			name = L["Simple Align"],
+			desc = L["!simple-align-desc!"]
+		},
+		{ -- simple
 			key = "align",
-			name = L["Align"],
-			desc = L["Controls the block alignment."],
+			name = L["Icon position"],
+			desc = L["Controls the position of the icon."],
 			values = alignValues,
-			disabled = DisabledIfIconVisible,
+			disabled = DisabledIfIconInvisible,
+			hidden = VisibleForSimpleMode,
 		},
-		{ -- creates a line break
-			type = "description",
-			name = "",
+		{ -- extended
+			key = "alignRelMode",
+			name = L["Relative Mode"],
 			desc = "",
+			values = relModes,
+			hidden = VisibleForExtendedMode,
 		},
-		{
+		{ -- extended
+			key = "iconAlign",
+			name = L["Icon Align"],
+			desc = "",
+			values = pointValues,
+			hidden = VisibleForExtendedMode,
+		},
+		{ -- extended
+			key = "iconAlignTo",
+			name = L["Icon Align To"],
+			desc = "",
+			values = pointValues,
+			hidden = VisibleForExtendedMode,
+		},
+		{ -- both
 			key = "iconAlignXOffs",
 			name = L["Icon X Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
-			disabled = DisabledIfIconVisible,
+			disabled = DisabledIfIconInvisible,
 		},
-		{
+		{ -- both
 			key = "iconAlignYOffs",
 			name = L["Icon Y Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
-			disabled = DisabledIfIconVisible,
+			disabled = DisabledIfIconInvisible,
 		},
-		{
+		{ -- extended 
+			key = "textAlign",
+			name = L["Text Align"],
+			desc = "",
+			values = pointValues,
+			hidden = VisibleForExtendedMode,
+		},
+		{ -- extended 
+			key = "textAlignTo",
+			name = L["Text Align To"],
+			desc = "",
+			values = pointValues,
+			hidden = VisibleForExtendedMode,
+		},
+		{ -- both
 			key = "textAlignXOffs",
 			name = L["Text X Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
 		},
-		{
+		{ -- both
 			key = "textAlignYOffs",
 			name = L["Text Y Offset"],
 			desc = "",
 			min = -20, max = 20, step = 1,
+		},
+		{ -- extended
+			key = "textJustify",
+			name = L["Text justify"],
+			desc = "",
+			values = pointValues,
+			hidden = VisibleForExtendedMode,
 		},
 	},
 }
