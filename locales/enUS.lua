@@ -96,11 +96,28 @@ L["Display the names of the empty blocks. This setting is not saved."] = true
 L["Note: Disable an empty block to remove it on the next reload."] = true
 L["Empty Block: %s"] = true
 L["There is allready a block named %s."] = true
+
 L["Left"] = true
 L["Right"] = true
-L["Align"] = true
-L["Controls the block alignment."] = true
+L["Center"] = true
+
+L["Text to icon"] = true
+L["Icon to text"] = true
+L["Both to block"] = true
+
+L["Simple Align"]  = true
+L["!simple-align-desc!"] = [[
+Controls the align mode. 
+Simple align will give you just some basic options, whereas the extended mode allows finer control of the position of icon and text.]]
+
+L["Icon Align"] = true
+L["Controls the position of the icon."] = true
+L["Icon Align To"] = true
 L["Icon X Offset"] = true
 L["Icon Y Offset"] = true
+
+L["Text Align"] = true
+L["Text Align To"] = true
 L["Text X Offset"] = true
 L["Text Y Offset"] = true
+L["Text justify"] = true
