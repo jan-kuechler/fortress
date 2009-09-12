@@ -105,19 +105,24 @@ L["Text to icon"] = true
 L["Icon to text"] = true
 L["Both to block"] = true
 
-L["Simple Align"]  = true
+L["Simple Layout"]  = true
 L["!simple-align-desc!"] = [[
-Controls the align mode. 
-Simple align will give you just some basic options, whereas the extended mode allows finer control of the position of icon and text.]]
+Controls the layout mode. 
+'Simple' will give you just some basic options, whereas the extended mode allows finer control of the position of icon and text.]]
 
-L["Icon Align"] = true
+L["Relative Mode"] = true
+L["Controls what item depends on what."] = true
+
+L["Icon position"] = true
 L["Controls the position of the icon."] = true
-L["Icon Align To"] = true
-L["Icon X Offset"] = true
-L["Icon Y Offset"] = true
 
-L["Text Align"] = true
-L["Text Align To"] = true
-L["Text X Offset"] = true
-L["Text Y Offset"] = true
+L["Icon point"] = true
+L["Icon relative point"] = true
+L["Icon X offset"] = true
+L["Icon Y offset"] = true
+
+L["Text point"] = true
+L["Text relative point"] = true
+L["Text X offset"] = true
+L["Text Y offset"] = true
 L["Text justify"] = true

@@ -97,14 +97,36 @@ L["Display the names of the empty blocks. This setting is not saved."] = "Die Na
 L["Note: Disable an empty block to remove it on the next reload."] = "Um einen leeren Block zu l\195\182schen, muss er deaktiviert werden. Deaktivierte leere Bl\195\182cke werden beim n\195\164chsten Start gel\195\182scht."
 L["Empty Block: %s"] = "Leerer Block: %s"
 L["There is allready a block named %s."] = "Es gibt schon einen leeren Block mit dem Namen %s."
+
 L["Left"] = "Links"
 L["Right"] = "Rechts"
-L["Align"] = "Anordnung"
-L["Controls the block alignment."] = "Bestimmt die Anordnung von Icon und Text auf dem Block."
-L["Icon X Offset"] = "Icon X Versatz"
-L["Icon Y Offset"] = "Icon Y Versatz"
-L["Text X Offset"] = "Text X Versatz"
-L["Text Y Offset"] = "Text Y Versatz"
+L["Center"] = "Mitte"
+
+L["Text to icon"] = "Text vom Icon"
+L["Icon to text"] = "Icon vom Text"
+L["Both to block"] = "Beide vom Block"
+
+L["Simple Layout"]  = "Einfaches Layout"
+L["!simple-align-desc!"] = [[
+Ändert den Layoutmodus.
+'Einfach' bietet nur einige wesentliche Optionen, während der erweiterte Modus bessere Kontrolle über die Position von Text und Icon bietet.]]
+
+L["Relative Mode"] = "Bezugsmodus"
+L["Controls what item depends on what."] = "Kontrolliert welches Objekt von welchem abhängt."
+
+L["Icon position"] = "Icon Position"
+L["Controls the position of the icon."] = "\195\132ndert die Position des Icons auf dem Block."
+
+L["Icon point"] = "Icon Position"
+L["Icon relative point"] = "Relative Icon Position"
+L["Icon X offset"] = "Icon X Versatz"
+L["Icon Y offset"] = "Icon Y Versatz"
+
+L["Text point"] = "Text Position"
+L["Text relative point"] = "Relative Text Position"
+L["Text X offset"] = "Text X Versatz"
+L["Text Y offset"] = "Text Y Versatz"
+L["Text justify"] = "Text Ausrichtung"
 
 --[[
 
