@@ -141,7 +141,9 @@ end
 
 local function ShowSingleBlock(block, name)
 	block:SetAlpha(GetPluginSetting(name, "blockAlpha"))
-	block.text:Show()
+	if block.hasText then
+		block.text:Show()
+	end
 	block.hidden = false
 end
 
@@ -283,10 +285,21 @@ end
 -- The updater functions handle any (enabled) do's value change.
 -- That may happen very often!
 
-local function BlockHasText(frame, name)
-	frame:ShowText()
-	if GetPluginSetting(name, "fixedWidth") then
-		frame.text:SetWidth(frame.text:GetStringWidth())
+local function BlockHasText(frame, name, hasText)
+	if hasText then
+		frame.hasText = true
+		frame:ShowText()
+		if GetPluginSetting(name, "fixedWidth") then
+			frame.text:SetWidth(frame.text:GetStringWidth())
+		end
+	else
+		frame.hasText = false
+		frame:HideText()
+	end
+	
+	 -- see HideSingleBlock
+	if frame.hidden then
+		frame.text:Hide()
 	end
 end
 
@@ -337,17 +350,9 @@ local function TextUpdater(frame, value, name)
 		end
 		hasText = true
 		
-	else
-		frame:HideText()
 	end
-	
-	if hasText then
-		BlockHasText(frame, name)
-	end
-	
-	if frame.hidden then -- see HideSingleBlock
-		frame.text:Hide()
-	end
+		
+	BlockHasText(frame, name, hasText)
 end
 
 local function LauncherTextUpdater(frame, value, name)
@@ -365,21 +370,17 @@ local function LauncherTextUpdater(frame, value, name)
 	local hasText = false
 	
 	if showLabel and obj.label then
+		Debug("Launcher with showLabel:", name)
 		frame.text:SetFormattedText("|cff%s%s|r", labelColor, obj.label)
 		hasText = true
 	elseif showText then
+		Debug("Launcher with showText:", name)
 		local text = launcherText[name] or name
 		frame.text:SetFormattedText("|cff%s%s|r", textColor, text)
 		hasText = true
 	end
 	
-	if hasText then
-		BlockHasText(frame, name)
-	end		
-	
-	if frame.hidden then
-		frame.text:Hide()
-	end
+	BlockHasText(frame, name, hasText)
 end
 
 local function IconColorUpdater(frame, value, name)
