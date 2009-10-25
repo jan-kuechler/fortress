@@ -349,7 +349,6 @@ local function TextUpdater(frame, value, name)
 			frame.text:SetFormattedText("|cff%s%s|r", textColor, obj.text)
 		end
 		hasText = true
-		
 	end
 		
 	BlockHasText(frame, name, hasText)
