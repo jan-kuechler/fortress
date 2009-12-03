@@ -280,6 +280,8 @@ local function VisibleForExtendedMode(info)
 	return GetPluginSetting(name, "simpleAlign")
 end
 
+-- This table will be converted to the AceOptions table for both
+-- the settings (incl. the master-mode toggle) and the master settings.
 local pluginSettings = {
 	{
 		name = L["General Settings"],
@@ -586,6 +588,7 @@ local pluginSettings = {
 	},
 }
 
+-- special only per dataobject options
 local pluginOptions = {
 	enabled = {
 		name = L["Enabled"],
@@ -619,7 +622,6 @@ local pluginOptionsGroup = {
 		args = pluginOptions,
 		-- Don't disable this, otherwise there's no way to reenable it...
 		-- Never!
-		-- disabled = PluginDisabled,
 		order = 1,
 	},
 	masterSettings = {
@@ -751,12 +753,14 @@ end
 
 local blizOptions
 
+-- /fortress without any paramter will open the GUI, 
+-- anything else goes to the slashcmd handler
 local function ChatCmd(input)
 	if not input or input:trim() == "" then
 		InterfaceOptionsFrame_OpenToCategory(blizOptions)
 	else
 		if input:trim() == "help" then
-			input = ""
+			input = "" -- let AceCfgCmd show the list of paramters
 		end
 		AceCfgCmd.HandleCommand(Fortress, "fortress", appName, input)
 	end
@@ -785,7 +789,7 @@ function Fortress:UpdateOptionsDbRef()
 	db = self.db.profile
 end
 
-local function Swap(tab, a, b)
+local function tswap(tab, a, b)
 	local tmp = tab[a]
 	tab[a] = tab[b]
 	tab[b] = tmp
@@ -797,7 +801,7 @@ local function SortSubCategories(parent)
 	for i=1, #list-1 do
 		if (list[i].parent == parent) and (list[i+1].parent == parent) then
 			if list[i].name:lower() > list[i+1].name:lower() then
-				Swap(list, i, i+1)
+				tswap(list, i, i+1)
 				done = false
 			end
 		end
@@ -818,8 +822,13 @@ function Fortress:AddObjectOptions(name, obj)
 	t.get  = PluginGet
 	t.set  = PluginSet
 	AceCfgReg:RegisterOptionsTable("Fortress"..name, t)
+	
+	-- HACK: The dash in front of the displayed name is a hack to prevent the suboption
+	--       from stealing the suboptions of an equal named config entry later in the list.
+	--       Hopefully nobody will name his DO 'Foo' and his config group '- Foo'...
 	local panel = AceCfgDlg:AddToBlizOptions("Fortress"..name, "- "..cfgname, "Fortress")
 	panel.obj:SetTitle(cfgname)
 	
+	-- Keep suboptions in alphabetical order
 	SortSubCategories("Fortress")
 end

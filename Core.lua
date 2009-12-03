@@ -601,13 +601,9 @@ function Fortress:LibDataBroker_DataObjectCreated(event, name, obj)
 	Debug("Dataobject Registered:", name)
 	local t = obj.type
 	
--- Only warn in alpha versions
---@alpha@
 	if t == nil then
-		--print("Fortress: The data object", name, "has no type attribute set. Please report this to the author of the plugin.")
 		Deprecated(name, "type attribute is nil")
 	end
---@end-alpha@
 
 	if not SupportedTypes[t] then
 		Debug("Unsupported: ", name, t)
