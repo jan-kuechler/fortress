@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: Fortress
 ## Notes: A display for LibDataBroker-1.1
 ## Author: andreasg, Borlox
@@ -10,9 +10,24 @@
 ## SavedVariables: FortressDB
 
 #@no-lib-strip@
-embeds.xml
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+	
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceConsole-3.0\AceConsole-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+libs\AceLocale-3.0\AceLocale-3.0.xml
+libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+	
+libs\LibSharedMedia-3.0\lib.xml
+	
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 #@end-no-lib-strip@
 
+# Allways load these libs, they are hard embedded
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 libs\LegoBlock\LegoBlock.lua
 
