@@ -561,6 +561,7 @@ function Fortress:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", "Refresh")
 	self.db.RegisterCallback(self, "OnProfileCopied", "Refresh")
 	self.db.RegisterCallback(self, "OnProfileReset", "Refresh")
+	self.db.RegisterCallback(self, "OnDatabaseShutdown", "OnDatabaseShutdown")
 	
 	self:SetEnabledState(db.enabled)
 	self:RegisterOptions()
@@ -592,6 +593,12 @@ function Fortress:Refresh()
 			
 	self:UpdateAllObjects()
 	Debug("Objects updated")
+end
+
+function Fortress:OnDatabaseShutdown()
+	-- Disable the addon, so very late data object updates don't
+	-- result in a db access (that would cause an error)
+	self:Disable()
 end
 
 --------
