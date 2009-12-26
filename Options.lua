@@ -352,9 +352,9 @@ local pluginSettings = {
 			key = "blockHeight",
 			name = L["Block Height"],
 			desc = L["Adjusts the plugin's height."],
-			min  =  20,
+			min  =   5,
 			max  = 100,
-			step =  1,
+			step =   1,
 		},	
 		{
 			key = "fixedWidth",
@@ -365,9 +365,9 @@ local pluginSettings = {
 			key = "blockWidth",
 			name = L["Width"],
 			desc = L["The width of this plugin in fixed width mode."],
-			min = 10,
+			min =   5,
 			max = 600,
-			step = 1,
+			step =  1,
 			disabled = function(info)
 				local name = GetAppName(info.appName)
 				return not GetPluginSetting(name, "fixedWidth")
