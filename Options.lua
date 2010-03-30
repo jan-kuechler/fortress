@@ -238,7 +238,9 @@ local options = {
 			order = 2,
 			get  = MasterGet,
 			set  = MasterSet,
-			args = {},
+			args = {
+				-- filled by CreatePluginOptions()
+			},
 		},
 	},
 }
@@ -292,6 +294,16 @@ end
 
 -- This table will be converted to the AceOptions table for both
 -- the settings (incl. the master-mode toggle) and the master settings.
+-- It consists of subtables (each one standing for one group of settings),
+-- that hold the options.
+--
+-- Options contain mainly AceOptions members, but some are special:
+-- key            - The database key for this option. The option's type is
+--                   choosen according to theto the type of the db value
+-- masterDisabled - Like disabled, but for the master mode
+-- masterHidden   - Like hidden, but only for master mode
+--
+-- See CreatePluginOptions() for any details
 local pluginSettings = {
 	{
 		name = L["General Settings"],
@@ -527,6 +539,7 @@ local pluginSettings = {
 		},
 		
 		-- Alignment
+		-- TODO: Split alignment to an extra group?
 		{
 			key = "simpleAlign",
 			name = L["Simple Layout"],
@@ -611,7 +624,8 @@ local pluginSettings = {
 	},
 }
 
--- special only per dataobject options
+-- Special options, that should not have a "master mode" are directly
+-- declared here.
 local pluginOptions = {
 	enabled = {
 		name = L["Enabled"],
@@ -636,7 +650,10 @@ local pluginOptions = {
 		order = 0,
 	},
 }
+-- This group holds all the "use master" toggles
 local pluginUseMasterOptions = {}
+
+-- This group holds the actual 
 local pluginOptionsGroup = {
 	settings = {
 		type = "group",
@@ -656,6 +673,8 @@ local pluginOptionsGroup = {
 	},
 }
 
+-- Maps the type of a database entry (the according Lua type)
+-- to an AceOptions entry type
 local typeToType = {
 	boolean = "toggle",
 	table   = "color",
@@ -675,16 +694,27 @@ local function CopyTable(tab, deep)
 	return ret
 end
 
+-- Special fields in the pluginSettings subtables,
+-- that are no AceOptions entries and should be
+-- ignored
 local ignoreFields = { 
 	key = true, 
 	masterDisabled = true,
 	masterHidden = true,
 }
 
+-- This function takes the pluginSettings table and
+-- transforms it into the settings categories
+-- * The master settings
+-- * The per plugin settings
+-- * The per plugin "use master" toggles
 local function CreatePluginOptions()
+	-- The database defaults, used to determine an option type
 	local optType = Fortress.defaults.profile.masterSettings
 
+	-- Iterate through each subgroup of options (like general or block customization)
 	for i, group in ipairs(pluginSettings) do
+		-- Layout of the group table
 		local groupName = "group" .. i
 		local groupTable = {
 			name   = "",
@@ -695,6 +725,7 @@ local function CreatePluginOptions()
 		}
 		local tmp
 	
+		-- copied for each setting category
 		tmp = CopyTable(groupTable, true)
 		pluginOptions[groupName] = tmp
 		local optionsArgs = tmp.args
@@ -703,11 +734,12 @@ local function CreatePluginOptions()
 		options.args.masterPluginSettings.args[groupName] = tmp
 		local masterArgs = tmp.args
 		
-		tmp = groupTable
+		tmp = groupTable -- no need to copy here, it's the last one (remember this, when adding another one (-; )
 		pluginUseMasterOptions[groupName] = tmp
 		local useMasterArgs = tmp.args
 		
 		if group.name then
+			-- Add a nice title
 			local heading = {
 				type = "header",
 				name = group.name,
@@ -719,17 +751,21 @@ local function CreatePluginOptions()
 			useMasterArgs.heading = heading
 		end
 
+		-- And loop through the entries
 		for ii, setting in ipairs(group) do
 			local key = setting.key
 			local t
-			if key then
+			if key then 
+				-- if key is provided, the type should be determined by
+				-- the db type
 				t = typeToType[type(optType[key])]
 			else
 				key = "entry"..ii
-				t = setting.type
+				t = setting.type -- otherwise it should be provided
 			end
 			Debug("Type for", key, "is", t or "nil")
 			
+			-- Get the getter/setter for per-plugin/master mode
 			local get, set, mget, mset
 			if t == "color" then
 				get = PluginColorGet
@@ -743,15 +779,18 @@ local function CreatePluginOptions()
 				mset = MasterSet
 			end
 			
+			-- Any special overrides?
 			get = setting.get or get
 			set = setting.set or set
 			
+			-- Create the options entry
 			local opt = {
 				type  = t,
 				get   = get,
 				set   = set,
 				order = ii,
 			}
+			-- And copy in all the information
 			for k, v in pairs(setting) do	
 				if not ignoreFields[k] then
 					opt[k] = v
@@ -759,13 +798,18 @@ local function CreatePluginOptions()
 			end
 			optionsArgs[key] = opt
 			
+			-- Copy it for the master mode and
+			-- adjust get,set,disabled,hidden
 			local masterOpt = CopyTable(opt)
 			masterOpt.get = mget
 			masterOpt.set = mset
 			masterOpt.disabled = setting.masterDisabled
 			masterOpt.hidden = setting.masterHidden
 			masterArgs[key] = masterOpt			
-						
+			
+			-- Create a simple toggle for the
+			-- "use master" switches.
+			-- I wonder if anybody uses them...
 			useMasterArgs[key] = {
 				type = "toggle",
 				name = setting.name,
@@ -779,6 +823,7 @@ local function CreatePluginOptions()
 	end
 end
 
+-- Holds the InterfaceOptionsFrame entry
 local blizOptions
 
 -- /fortress without any paramter will open the GUI, 
@@ -823,6 +868,7 @@ local function tswap(tab, a, b)
 	tab[b] = tmp
 end
 
+-- Bubble bubble blub!
 local function SortSubCategories(parent)
 	local list = INTERFACEOPTIONS_ADDONCATEGORIES
 	local done = true
