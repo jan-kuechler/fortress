@@ -1,6 +1,7 @@
 ## Interface: 30300
 ## Title: Fortress
-## Notes: A display for LibDataBroker-1.1
+## Notes: A data broker display, that shows one block per plugin.
+## Notes-deDE: Ein data broker Display, das einzelne Blocks anzeigt.
 ## Author: andreasg, Borlox
 ## Version: @project-version@ 
 ## X-Email: borlox@worldofwar.de
