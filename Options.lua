@@ -280,6 +280,16 @@ local function VisibleForExtendedMode(info)
 	return GetPluginSetting(name, "simpleAlign")
 end
 
+local function HasTooltipScale(info)
+	local name = GetAppName(info.appName)
+	local obj = Fortress.DataObjects[name]
+	return Fortress.IsUsingGameTooltip(obj)
+end
+
+local function NotHasTooltipScale(info)
+	return not HasTooltipScale(info)
+end
+
 -- This table will be converted to the AceOptions table for both
 -- the settings (incl. the master-mode toggle) and the master settings.
 local pluginSettings = {
@@ -498,12 +508,25 @@ local pluginSettings = {
 			desc = L["Force this plugin to be visible, even if it should be hidden by any other option."],
 		},
 		
-		-- Alignment
-		{ -- creates a line break
-			type = "description",
-			name = "",
-			desc = "",
+		{
+			key = "tooltipScale",
+			name = "Tooltip scale",
+			desc = "The scale of the tooltip",
+			min  = .1,
+			max  = 2,
+			bigStep = .1,
+			hidden = NotHasTooltipScale,
+			disabled = NotHasTooltipScale,
 		},
+		{
+			type = "description",
+			name = "The tooltip scale option is not available for this plugin",
+			desc = "",
+			hidden = HasTooltipScale,
+			masterHidden = true,
+		},
+		
+		-- Alignment
 		{
 			key = "simpleAlign",
 			name = L["Simple Layout"],
@@ -652,7 +675,11 @@ local function CopyTable(tab, deep)
 	return ret
 end
 
-local ignoreFields = { key = true, masterDisabled = true }
+local ignoreFields = { 
+	key = true, 
+	masterDisabled = true,
+	masterHidden = true,
+}
 
 local function CreatePluginOptions()
 	local optType = Fortress.defaults.profile.masterSettings
@@ -736,6 +763,7 @@ local function CreatePluginOptions()
 			masterOpt.get = mget
 			masterOpt.set = mset
 			masterOpt.disabled = setting.masterDisabled
+			masterOpt.hidden = setting.masterHidden
 			masterArgs[key] = masterOpt			
 						
 			useMasterArgs[key] = {

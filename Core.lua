@@ -110,6 +110,11 @@ local function IsDummy(name)
 end
 Fortress.IsDummy = IsDummy
 
+local function IsUsingGameTooltip(obj)
+	return obj.tooltiptext or obj.OnTooltipShow
+end
+Fortress.IsUsingGameTooltip = IsUsingGameTooltip
+
 local function GetAnchors(frame)
 	local x, y = frame:GetCenter()
 	local leftRight
@@ -183,8 +188,9 @@ end
 -- Tooltip handling
 --------
 local GameTooltip = GameTooltip
-local function GT_OnLeave(self)
+local function HideGameTooltip(self)
 	self:SetScript("OnLeave", self.fortressOnLeave)
+	self:SetScale(self.fortressScale or 1)
 	self:Hide()
 	if self.fortressBlock then
 		HideBlocks(self.fortressBlock, self.fortressName)
@@ -192,14 +198,16 @@ local function GT_OnLeave(self)
 	GameTooltip:EnableMouse(false)
 end
 
-local function PrepareTooltip(frame, anchorFrame)
+local function PrepareTooltip(frame, anchorFrame, name)
 	if frame == GameTooltip then
+		frame.fortressScale = frame:GetScale()
 		frame.fortressOnLeave = frame:GetScript("OnLeave")
 		frame.fortressBlock = anchorFrame
 		frame.fortressName = anchorFrame.name
 		
 		frame:EnableMouse(true)
-		frame:SetScript("OnLeave", GT_OnLeave)
+		frame:SetScript("OnLeave", HideGameTooltip)
+		frame:SetScale(GetPluginSetting(name, "tooltipScale"))
 	end
 	frame:SetOwner(anchorFrame, "ANCHOR_NONE")
 	frame:ClearAllPoints()
@@ -219,19 +227,19 @@ local function Block_OnEnter(self)
 			
 	if (not InCombatLockdown()) or (not GetPluginSetting(name, "hideTooltipInCombat")) then	
 		if obj.tooltip then
-			PrepareTooltip(obj.tooltip, self)
+			PrepareTooltip(obj.tooltip, self, name)
 			if obj.tooltiptext then
 				obj.tooltip:SetText(obj.tooltiptext)
 			end
 			obj.tooltip:Show()
 		
 		elseif obj.OnTooltipShow then
-			PrepareTooltip(GameTooltip, self)
+			PrepareTooltip(GameTooltip, self, name)
 			obj.OnTooltipShow(GameTooltip)
 			GameTooltip:Show()
 		
 		elseif obj.tooltiptext then
-			PrepareTooltip(GameTooltip, self)
+			PrepareTooltip(GameTooltip, self, name)
 			GameTooltip:SetText(obj.tooltiptext)
 			GameTooltip:Show()		
 		
@@ -249,12 +257,14 @@ local function Block_OnLeave(self)
 		obj.OnLeave(self)
 	end	
 	
-	if MouseIsOver(GameTooltip) and (obj.tooltiptext or obj.OnTooltipShow) then return end
+	if MouseIsOver(GameTooltip) and IsUsingGameTooltip(obj) then 
+		return 
+	end
 	
 	HideBlocks(self, name)
 
-	if obj.tooltiptext or obj.OnTooltipShow then
-		GT_OnLeave(GameTooltip)
+	if IsUsingGameTooltip(obj) then
+		HideGameTooltip(GameTooltip)
 	end
 end
 
@@ -535,6 +545,8 @@ function Fortress:OnInitialize()
 				bgTileSize = 16,
 				edgeSize   = 16,
 				insets     =  5,
+				
+				tooltipScale = 1,
 			},
 			pluginUseMaster = {
 				['*'] = {}
