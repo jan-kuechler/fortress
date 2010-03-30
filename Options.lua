@@ -510,8 +510,8 @@ local pluginSettings = {
 		
 		{
 			key = "tooltipScale",
-			name = "Tooltip scale",
-			desc = "The scale of the tooltip",
+			name = L["Tooltip scale"],
+			desc = L["The scale of the tooltip"],
 			min  = .1,
 			max  = 2,
 			bigStep = .1,
@@ -520,7 +520,7 @@ local pluginSettings = {
 		},
 		{
 			type = "description",
-			name = "The tooltip scale option is not available for this plugin",
+			name = L["The tooltip scale option is not available for this plugin"],
 			desc = "",
 			hidden = HasTooltipScale,
 			masterHidden = true,

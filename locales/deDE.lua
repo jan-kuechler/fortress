@@ -128,6 +128,11 @@ L["Text X offset"] = "Text X Versatz"
 L["Text Y offset"] = "Text Y Versatz"
 L["Text justify"] = "Text Ausrichtung"
 
+L["Tooltip scale"] = "Tooltipgr\195\182\195\159e"
+L["The scale of the tooltip"] = "Die Gr\195\182\195\159e des Tooltips"
+L["The tooltip scale option is not available for this plugin"] = "Die Tooltipgr\195\182\195\159e Option ist f\195\188r dieses Plugin nicht verf\195\188gbar"
+
+
 --[[
 
 Ä: \195\132 ä: \195\164

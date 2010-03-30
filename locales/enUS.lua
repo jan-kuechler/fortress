@@ -126,3 +126,7 @@ L["Text relative point"] = true
 L["Text X offset"] = true
 L["Text Y offset"] = true
 L["Text justify"] = true
+
+L["Tooltip scale"] = true
+L["The scale of the tooltip"] = true
+L["The tooltip scale option is not available for this plugin"] = true
